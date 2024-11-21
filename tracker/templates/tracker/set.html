@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Set Goal</title>
+    </head>
+    <body>
+        <form action="{% url 'set' %}" method="post">
+            {% csrf_token %}
+            <div>
+                <label for="weight">What is your current Weight</label>
+                <input type="number" name="weight" min="50" max="1000">
+            </div>
+            <div>
+                <label for="height_ft">How tall are you?</label>
+                <input type="number" name="height_ft" min="2" max="7" placeholder="ft">
+                <input type="number" name="height_in" min="0" max="11" placeholder="in">
+            </div>
+            <div>
+                <label for="goal">What are you trying to achieve? </label>
+                <select name="goal">
+                    {% for choice in choices %}
+                <option value="{{ choice }}">
+                    {{choice}}
+                </option>
+                {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="weight_goal">What is your weight goal</label>
+                <input type="number" name="weight_goal" min="50" max="1000">
+            </div>
+            
+            <input type="submit">
+        </form>
+    </body>
+</html>
