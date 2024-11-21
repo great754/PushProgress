@@ -12,27 +12,30 @@ from django.contrib.auth.models import User
 
 # Create your views here.
 def login_page(request):
-    # Check if the HTTP request method is POST (form submission)
-    if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        # Check if a user with the provided username exists
-        if not User.objects.filter(username=username).exists():
-            # Display an error message if the username does not exist
-            messages.error(request, 'Invalid Username')
-            return redirect('login')
-        
-        user = authenticate(username=username, password=password)
-        
-        if user is None:
-            # Display an error message if authentication fails (invalid password)
-            messages.error(request, "Invalid Password")
-            return redirect('login')
-        else:
-            # Log in the user and redirect to the home page upon successful login
-            login(request, user)
-            return redirect('index')
+    if not request.user.is_authenticated:
+        # Check if the HTTP request method is POST (form submission)
+        if request.method == "POST":
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            
+            # Check if a user with the provided username exists
+            if not User.objects.filter(username=username).exists():
+                # Display an error message if the username does not exist
+                messages.error(request, 'Invalid Username')
+                return redirect('login')
+            
+            user = authenticate(username=username, password=password)
+            
+            if user is None:
+                # Display an error message if authentication fails (invalid password)
+                messages.error(request, "Invalid Password")
+                return redirect('login')
+            else:
+                # Log in the user and redirect to the home page upon successful login
+                login(request, user)
+                return redirect('index')
+    else:
+        return redirect('index')
     
     # Render the login page template (GET request)
     return render(request, 'tracker/login.html')
@@ -67,20 +70,36 @@ def register_page(request):
         
         # Display an information message indicating successful account creation
         messages.info(request, "Account created Successfully!")
-        return redirect('register')
+        return redirect('index')
     
     # Render the registration page template (GET request)
     return render(request, 'tracker/register.html')
 
 
-def index(request):
-    try:
-        Stats.objects.get(current_user = request.user)
-        return render(request, 'tracker/index.html')
-    except Stats.DoesNotExist:
-        return redirect('set')
+def logout_view(request):
+    # Log out the current user
+    logout(request)
+    # Redirect to the login page (or another page, e.g., home page)
+    messages.info(request, "You have been logged out successfully.")
+    return redirect('login')  # Replace 'login' with your desired URL name
 
-@login_required
+
+def index(request):
+    ## MAYBE ADD ANOTHER html template that the visiting user not logged in will see
+    if request.user.is_authenticated:
+        try:
+            details = Stats.objects.get(current_user = request.user)
+            goal = details.goal
+            weight = details.weight
+            return render(request, 'tracker/index.html', {
+                "goal": goal,
+                "weight": weight
+            })
+        except Stats.DoesNotExist:
+            return redirect('set')
+    else:
+        return redirect('login')
+
 def set_goal(request):
     try:
         Stats.objects.get(current_user = request.user)
