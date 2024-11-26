@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+import requests
 
 # Create your views here.
 def login_page(request):
@@ -87,26 +88,31 @@ def logout_view(request):
 def index(request):
     ## MAYBE ADD ANOTHER html template that the visiting user not logged in will see
     if request.user.is_authenticated:
-        try:
-            goals = []
-            details = Stats.objects.filter(current_user = request.user)
+        goals = []
+        details = Stats.objects.filter(current_user = request.user)
+        if len(details)>0:
             for detail in details:
                 goals.append(detail.goal)
             weight = details[1].weight
-            return render(request, 'tracker/index.html', {
-                "goals": goals,
-                "weight": weight
-            })
-        except Stats.DoesNotExist:
+            try:
+                calorie_goal = Food.objects.get(current_user = request.user)
+                return render(request, 'tracker/index.html', {
+                    "goals": goals,
+                    "weight": weight,
+                    "calorie_goal":calorie_goal.calorie_goal
+                })
+            except Food.DoesNotExist:
+                return redirect('food')
+        else:
             return redirect('set')
     else:
         return redirect('login')
 
 def set_goal(request):
-    try:
-        Stats.objects.get(current_user = request.user)
-        return redirect("index")
-    except Stats.DoesNotExist:
+    stats = Stats.objects.filter(current_user = request.user)
+    if len(stats) > 0:
+        return redirect('index')
+    else:
         if request.method == 'POST':
             weight = request.POST["weight"]
             heightft = request.POST["height_ft"]
@@ -125,3 +131,57 @@ def set_goal(request):
             return render(request, "tracker/set.html", {
                 "choices": choices
             })
+        
+def get_calories(food):
+    query = food
+    api_url = 'https://api.calorieninjas.com/v1/nutrition?query='
+    response = requests.get(api_url + query, headers={'X-Api-Key': '0A4UID/vDwQwBEgxYj5rsw==et2WzgYuUeN89gMV'})
+    if response.status_code == requests.codes.ok:
+        return eval(response.text)["items"]
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
+def food(request):
+    # https://www.gicare.com/diets/increasing-calories/
+    if request.method == 'POST':
+        breakfast = get_calories(request.POST["breakfast"])
+        lunch  = get_calories(request.POST["lunch"])
+        dinner = get_calories(request.POST["dinner"])
+        snacks = get_calories(request.POST["snacks"])
+
+        total_calories = 0
+        breakfast_calories = 0
+        lunch_calories = 0
+        dinner_calories = 0
+        snack_calories = 0
+        if len(breakfast) == 0:
+            breakfast_calories = 0
+        else:
+            for item in breakfast:
+                breakfast_calories += item['calories']
+
+        if len(lunch) == 0:
+            lunch_calories = 0
+        else:
+            for item in lunch:
+                lunch_calories += item['calories']
+
+        if len(dinner) == 0:
+            dinner_calories = 0
+        else:
+            for item in dinner:
+                dinner_calories += item['calories']
+        
+        if len(snacks) == 0:
+            snack_calories = 0
+        else:
+            for item in dinner:
+                snack_calories += item['calories']
+        total_calories = breakfast_calories+lunch_calories+dinner_calories+snack_calories
+
+        new_calories = total_calories+500
+
+        Food(current_user = request.user, old_calories = total_calories, calorie_goal=new_calories).save()
+        return redirect('index')
+    else:
+        return render(request, "tracker/food.html")

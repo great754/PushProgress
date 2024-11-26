@@ -1,0 +1,27 @@
+{% extends "tracker/layout.html" %}
+
+{% block body %}
+<h3>What would you eat in a typical day</h3>
+<form action="{% url 'food' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="breakfast">What do you eat for breakfast</label>
+        <input type="text" name="breakfast">
+    </div>
+    <div>
+        <label for="lunch">What do you eat for lunch</label>
+        <input type="text" name="lunch">
+    </div>
+    <div>
+        <label for="dinner">What do you eat for breakfast</label>
+        <input type="text" name="dinner">
+    </div>
+    <div>
+        <label for="snacks">What do you eat for breakfast</label>
+        <input type="text" name="snacks">
+    </div>
+    <input type="submit">
+</form>
+
+
+{% endblock %}
