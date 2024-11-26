@@ -88,11 +88,13 @@ def index(request):
     ## MAYBE ADD ANOTHER html template that the visiting user not logged in will see
     if request.user.is_authenticated:
         try:
-            details = Stats.objects.get(current_user = request.user)
-            goal = details.goal
-            weight = details.weight
+            goals = []
+            details = Stats.objects.filter(current_user = request.user)
+            for detail in details:
+                goals.append(detail.goal)
+            weight = details[1].weight
             return render(request, 'tracker/index.html', {
-                "goal": goal,
+                "goals": goals,
                 "weight": weight
             })
         except Stats.DoesNotExist:
@@ -110,11 +112,11 @@ def set_goal(request):
             heightft = request.POST["height_ft"]
             heightin = request.POST["height_in"]
             height = int(heightft) + int(heightin)
-            goal = request.POST["goal"]
+            goals = request.POST.getlist("goal")
             weight_goal = request.POST["weight_goal"]
-            Stats(current_user = request.user, goal = goal, weight = weight, weight_goal = weight_goal, height = height).save()
+            for goal in goals:
+                Stats(current_user = request.user, goal = goal, weight = weight, weight_goal = weight_goal, height = height).save()
             return redirect("index")
-
         else:
             stats_choices = Stats.GOAL_CHOICES
             choices = []

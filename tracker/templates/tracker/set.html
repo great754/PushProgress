@@ -13,14 +13,14 @@
         <input type="number" name="height_in" min="0" max="11" placeholder="in">
     </div>
     <div>
-        <label for="goal">What are you trying to achieve? </label>
-        <select name="goal">
-            {% for choice in choices %}
-        <option value="{{ choice }}">
-            {{choice}}
-        </option>
+        <label for="goal">What are you trying to achieve? </label></br>
+        {% for choice in choices %}
+        <label>
+            <div>
+            <input type="checkbox" name="goal" value="{{choice}}">{{choice}}
+        </div>
+        </label> </br>
         {% endfor %}
-        </select>
     </div>
     <div>
         <label for="weight_goal">What is your weight goal</label>
