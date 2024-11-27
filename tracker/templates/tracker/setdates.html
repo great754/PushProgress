@@ -1,0 +1,38 @@
+{% extends "tracker/layout.html" %}
+
+{% block body %}
+<h1>Set dates</h1>
+<form action="{% url 'set_dates' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <input type="checkbox" name="day" value="Sunday">
+        <label for="Sunday">Sunday</label>
+    </div>
+    <div>
+        <input type="checkbox" name="day" value="Monday">
+        <label for="Monday">Monday</label>
+    </div>
+    <div>
+        <input type="checkbox" name="day" value="Tuesday">
+        <label for="Tuesday">Tuesday</label>
+    </div>
+    <div>
+        <input type="checkbox" name="day" value="Wednesday">
+        <label for="Wednesday">Wednesday</label>
+    </div>
+    <div>
+        <input type="checkbox" name="day" value="Thursday">
+        <label for="Thursday">Thursday</label>
+    </div>
+    <div>
+        <input type="checkbox" name="day" value="Friday">
+        <label for="Friday">Friday</label>
+    </div>
+    <div>
+        <input type="checkbox" name="day" value="Saturday">
+        <label for="Saturday">Saturday</label>
+    </div>
+    <input type="submit">
+</form>
+
+{% endblock %}

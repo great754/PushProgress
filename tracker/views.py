@@ -110,28 +110,31 @@ def index(request):
         return redirect('login')
 
 def set_goal(request):
-    stats = Stats.objects.filter(current_user = request.user)
-    if len(stats) > 0:
-        return redirect('index')
-    else:
-        if request.method == 'POST':
-            weight = request.POST["weight"]
-            heightft = request.POST["height_ft"]
-            heightin = request.POST["height_in"]
-            height = int(heightft) + int(heightin)
-            goals = request.POST.getlist("goal")
-            weight_goal = request.POST["weight_goal"]
-            for goal in goals:
-                Stats(current_user = request.user, goal = goal, weight = weight, weight_goal = weight_goal, height = height).save()
-            return redirect("index")
+    if request.user.is_authenticated:
+        stats = Stats.objects.filter(current_user = request.user)
+        if len(stats) > 0:
+            return redirect('index')
         else:
-            stats_choices = Stats.GOAL_CHOICES
-            choices = []
-            for choice in stats_choices:
-                choices.append(choice[1])
-            return render(request, "tracker/set.html", {
-                "choices": choices
-            })
+            if request.method == 'POST':
+                weight = request.POST["weight"]
+                heightft = request.POST["height_ft"]
+                heightin = request.POST["height_in"]
+                height = int(heightft) + int(heightin)
+                goals = request.POST.getlist("goal")
+                weight_goal = request.POST["weight_goal"]
+                for goal in goals:
+                    Stats(current_user = request.user, goal = goal, weight = weight, weight_goal = weight_goal, height = height).save()
+                return redirect("index")
+            else:
+                stats_choices = Stats.GOAL_CHOICES
+                choices = []
+                for choice in stats_choices:
+                    choices.append(choice[1])
+                return render(request, "tracker/set.html", {
+                    "choices": choices
+                })
+    else:
+        return redirect('index')
         
 def get_calories(food):
     query = food
@@ -144,49 +147,66 @@ def get_calories(food):
 
 def food(request):
     # https://www.gicare.com/diets/increasing-calories/
-    if request.method == 'POST':
-        breakfast = get_calories(request.POST["breakfast"])
-        breakfast_servings = int(request.POST["breakfast_servings"])
-        lunch  = get_calories(request.POST["lunch"])
-        lunch_servings = int(request.POST["lunch_servings"])
-        dinner = get_calories(request.POST["dinner"])
-        dinner_servings = int(request.POST["dinner_servings"])
-        snacks = get_calories(request.POST["snacks"])
-        snack_servings = int(request.POST["snack_servings"])
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            breakfast = get_calories(request.POST["breakfast"])
+            breakfast_servings = int(request.POST["breakfast_servings"])
+            lunch  = get_calories(request.POST["lunch"])
+            lunch_servings = int(request.POST["lunch_servings"])
+            dinner = get_calories(request.POST["dinner"])
+            dinner_servings = int(request.POST["dinner_servings"])
+            snacks = get_calories(request.POST["snacks"])
+            snack_servings = int(request.POST["snack_servings"])
 
-        total_calories = 0
-        breakfast_calories = 0
-        lunch_calories = 0
-        dinner_calories = 0
-        snack_calories = 0
-        if len(breakfast) == 0:
+            old_protein = 0
+            total_calories = 0
             breakfast_calories = 0
-        else:
-            for item in breakfast:
-                breakfast_calories += (item['calories'] * breakfast_servings)
-
-        if len(lunch) == 0:
             lunch_calories = 0
-        else:
-            for item in lunch:
-                lunch_calories += (item['calories'] * lunch_servings)
-
-        if len(dinner) == 0:
             dinner_calories = 0
-        else:
-            for item in dinner:
-                dinner_calories += (item['calories'] * dinner_servings)
-        
-        if len(snacks) == 0:
             snack_calories = 0
+            if len(breakfast) == 0:
+                breakfast_calories = 0
+            else:
+                for item in breakfast:
+                    breakfast_calories += (item['calories'] * breakfast_servings)
+                    old_protein += (item['protein_g'] * breakfast_servings)
+
+            if len(lunch) == 0:
+                lunch_calories = 0
+            else:
+                for item in lunch:
+                    lunch_calories += (item['calories'] * lunch_servings)
+                    old_protein += (item['protein_g'] * lunch_servings)
+
+            if len(dinner) == 0:
+                dinner_calories = 0
+            else:
+                for item in dinner:
+                    dinner_calories += (item['calories'] * dinner_servings)
+                    old_protein += (item['protein_g'] * dinner_servings)
+            
+            if len(snacks) == 0:
+                snack_calories = 0
+            else:
+                for item in dinner:
+                    snack_calories += (item['calories'] * snack_servings)
+            total_calories = breakfast_calories+lunch_calories+dinner_calories+snack_calories
+
+            new_calories = total_calories+500
+            curr_weight = (Stats.objects.filter(current_user = request.user))[0]
+            Food(current_user=request.user, old_calories=total_calories, calorie_goal=new_calories, old_protein=old_protein, protein_goal=curr_weight.weight).save()
+            return redirect('index')
         else:
-            for item in dinner:
-                snack_calories += (item['calories'] * snack_servings)
-        total_calories = breakfast_calories+lunch_calories+dinner_calories+snack_calories
-
-        new_calories = total_calories+500
-
-        Food(current_user = request.user, old_calories = total_calories, calorie_goal=new_calories).save()
-        return redirect('index')
+            return render(request, "tracker/food.html")
     else:
-        return render(request, "tracker/food.html")
+        return redirect('index')
+    
+## sets the workout routine
+def set_dates(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            days = request.POST.getlist("day")
+        else:
+            return render(request, "tracker/setdates.html")
+    else:
+        return redirect('login')

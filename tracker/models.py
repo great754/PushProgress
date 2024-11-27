@@ -27,6 +27,8 @@ class Stats(models.Model):
 class Food(models.Model):
     current_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="food_user")
     old_calories = models.IntegerField(default=0)
+    old_protein = models.IntegerField(default=0)
+    protein_goal = models.IntegerField(default=0)
     calorie_goal = models.IntegerField(default=0)
 
     def __str__(self):
