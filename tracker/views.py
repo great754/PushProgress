@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 import requests
+from django.conf import settings
 
 # Create your views here.
 def login_page(request):
@@ -135,7 +136,7 @@ def set_goal(request):
 def get_calories(food):
     query = food
     api_url = 'https://api.calorieninjas.com/v1/nutrition?query='
-    response = requests.get(api_url + query, headers={'X-Api-Key': '0A4UID/vDwQwBEgxYj5rsw==et2WzgYuUeN89gMV'})
+    response = requests.get(api_url + query, headers={'X-Api-Key': settings.NUTR_API_KEY})
     if response.status_code == requests.codes.ok:
         return eval(response.text)["items"]
     else:
@@ -145,9 +146,13 @@ def food(request):
     # https://www.gicare.com/diets/increasing-calories/
     if request.method == 'POST':
         breakfast = get_calories(request.POST["breakfast"])
+        breakfast_servings = int(request.POST["breakfast_servings"])
         lunch  = get_calories(request.POST["lunch"])
+        lunch_servings = int(request.POST["lunch_servings"])
         dinner = get_calories(request.POST["dinner"])
+        dinner_servings = int(request.POST["dinner_servings"])
         snacks = get_calories(request.POST["snacks"])
+        snack_servings = int(request.POST["snack_servings"])
 
         total_calories = 0
         breakfast_calories = 0
@@ -158,25 +163,25 @@ def food(request):
             breakfast_calories = 0
         else:
             for item in breakfast:
-                breakfast_calories += item['calories']
+                breakfast_calories += (item['calories'] * breakfast_servings)
 
         if len(lunch) == 0:
             lunch_calories = 0
         else:
             for item in lunch:
-                lunch_calories += item['calories']
+                lunch_calories += (item['calories'] * lunch_servings)
 
         if len(dinner) == 0:
             dinner_calories = 0
         else:
             for item in dinner:
-                dinner_calories += item['calories']
+                dinner_calories += (item['calories'] * dinner_servings)
         
         if len(snacks) == 0:
             snack_calories = 0
         else:
             for item in dinner:
-                snack_calories += item['calories']
+                snack_calories += (item['calories'] * snack_servings)
         total_calories = breakfast_calories+lunch_calories+dinner_calories+snack_calories
 
         new_calories = total_calories+500
