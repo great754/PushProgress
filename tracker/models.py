@@ -34,4 +34,7 @@ class Food(models.Model):
     def __str__(self):
         return f"{self.current_user} eats {self.old_calories} but goal is {self.calorie_goal}"
     
+# class Goal(models.Model):
+#     current_user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     workout_plan =
 ## Class called Calories, that tracks the food the user ate that day, and their goal, and sees if they met their goal

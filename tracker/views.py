@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 import requests
 from django.conf import settings
+from .workouts import get_workout
 
 # Create your views here.
 def login_page(request):
@@ -206,6 +207,7 @@ def set_dates(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             days = request.POST.getlist("day")
+            workout = get_workout(days)
         else:
             return render(request, "tracker/setdates.html")
     else:
