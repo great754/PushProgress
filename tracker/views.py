@@ -207,7 +207,9 @@ def set_dates(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             days = request.POST.getlist("day")
-            workout = get_workout(days)
+            workout = get_workout(len(days))
+            Goal(current_user = request.user, workout=workout, days = days, date_started=timezone.now()).save()
+            return redirect('index')
         else:
             return render(request, "tracker/setdates.html")
     else:

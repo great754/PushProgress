@@ -38,3 +38,12 @@ class Food(models.Model):
 #     current_user = models.ForeignKey(User, on_delete=models.CASCADE)
 #     workout_plan =
 ## Class called Calories, that tracks the food the user ate that day, and their goal, and sees if they met their goal
+
+class Goal(models.Model):
+    current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="goal_creator")
+    workout = models.JSONField(default=dict())
+    days = models.JSONField(default=list())
+    date_started = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.current_user} can work out {len(self.days)} days a week"

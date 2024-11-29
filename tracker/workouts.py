@@ -1,4 +1,4 @@
-one_day = {
+one_day = [
     {"Squats": "2 sets of 20 reps"},
     {"Barbell Rows or Seated Cable Rows": "4 sets of 5-12 reps"},
     {"Bench Press": "4 sets of 5-12 reps"},
@@ -6,7 +6,7 @@ one_day = {
     {"Seated Arnold Press": "4 sets of 5-12 reps"},
     {"Dips": "4 sets of as many reps as possible (AMAP)"},
     {"Chin Ups or Barbell Curls": "4 sets of 5-12 reps (as many reps as possible if doing chin-ups)"}
-}
+]
 
 two_day = {
     "Upper": [
