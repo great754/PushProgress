@@ -5,8 +5,12 @@
 
 <h3>Your Goals: {{goals}} </h3>
 <h3>Your Weight {{weight}} lbs</h3>
+{% if workout %}
+{{ workout.workout }} on {{ workout.days }}
+{% else %}
 <form action="{% url 'set_dates' %}">
     <input type="submit" value="Set Dates to suggest workout">
 </form>
+{% endif %}
 
 {% endblock %}

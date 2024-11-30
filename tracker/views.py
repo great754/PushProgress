@@ -98,11 +98,19 @@ def index(request):
             weight = details[1].weight
             try:
                 calorie_goal = Food.objects.get(current_user = request.user)
-                return render(request, 'tracker/index.html', {
-                    "goals": goals,
-                    "weight": weight,
-                    "calorie_goal":calorie_goal.calorie_goal
-                })
+                if len(Goal.objects.filter(current_user = request.user))> 0:
+                    return render(request, 'tracker/index.html', {
+                        "goals": goals,
+                        "weight": weight,
+                        "calorie_goal":calorie_goal.calorie_goal, 
+                        "workout": Goal.objects.get(current_user = request.user)        ## Helper function here that returns the goal in a smooth way
+                    })
+                else:
+                    return render(request, 'tracker/index.html', {
+                        "goals": goals,
+                        "weight": weight,
+                        "calorie_goal":calorie_goal.calorie_goal
+                    })
             except Food.DoesNotExist:
                 return redirect('food')
         else:
