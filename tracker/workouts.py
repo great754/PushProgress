@@ -258,6 +258,4 @@ def get_workout(days):
         return two_day
     elif days == 3:
         return three_day
-    elif days == 4:
-        return four_day
     else: return five_day

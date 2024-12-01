@@ -6,7 +6,21 @@
 <h3>Your Goals: {{goals}} </h3>
 <h3>Your Weight {{weight}} lbs</h3>
 {% if workout %}
-{{ workout.workout }} on {{ workout.days }}
+<table style="border: 1px solid black">
+    <tr>
+        <th>Day</th>
+        <th>Workout</th>
+    </tr>
+    {% for day in workout %}
+    <tr>
+        <td>{{day|first}}</td>
+        {% for title in day|slice:"1:2" %}
+        <td> {{title}} </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<!-- {{ workout }} -->
 {% else %}
 <form action="{% url 'set_dates' %}">
     <input type="submit" value="Set Dates to suggest workout">

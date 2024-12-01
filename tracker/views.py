@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 import requests
 from django.conf import settings
 from .workouts import get_workout
+import itertools
 
 # Create your views here.
 def login_page(request):
@@ -99,11 +100,12 @@ def index(request):
             try:
                 calorie_goal = Food.objects.get(current_user = request.user)
                 if len(Goal.objects.filter(current_user = request.user))> 0:
+                    workout = Goal.objects.get(current_user = request.user) 
                     return render(request, 'tracker/index.html', {
                         "goals": goals,
                         "weight": weight,
                         "calorie_goal":calorie_goal.calorie_goal, 
-                        "workout": Goal.objects.get(current_user = request.user)        ## Helper function here that returns the goal in a smooth way
+                        "workout": pair_days(workout.days, workout.workout)        ## Helper function here that returns the goal in a smooth way
                     })
                 else:
                     return render(request, 'tracker/index.html', {
@@ -222,3 +224,19 @@ def set_dates(request):
             return render(request, "tracker/setdates.html")
     else:
         return redirect('login')
+
+def pair_days(days, workout):
+    result = []
+    days = set(days)
+    added = {}
+    all_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    
+    for day in all_days:
+        indices = list(workout)
+        if day not in days:
+            result.append((day, {"Rest": "Rest Today"}))
+        else:
+            result.append((day, workout[indices[0]]))
+            del workout[indices[0]]
+
+    return result
