@@ -93,25 +93,30 @@ def index(request):
     if request.user.is_authenticated:
         goals = []
         details = Stats.objects.filter(current_user = request.user)
-        if len(details)>0:
+        if len(details)>0:          # if the user already has stats
             for detail in details:
                 goals.append(detail.goal)
-            weight = details[1].weight
+            weight = details[0].weight
             try:
-                calorie_goal = Food.objects.get(current_user = request.user)
+                calories = Food.objects.get(current_user = request.user)
                 if len(Goal.objects.filter(current_user = request.user))> 0:
                     workout = Goal.objects.get(current_user = request.user) 
+                    paired = pair_days(workout.days, workout.workout)
+                    day = datetime.now().strftime('%A')
                     return render(request, 'tracker/index.html', {
                         "goals": goals,
                         "weight": weight,
-                        "calorie_goal":calorie_goal.calorie_goal, 
-                        "workout": pair_days(workout.days, workout.workout)        ## Helper function here that returns the goal in a smooth way
+                        "calorie_goal":calories.calorie_goal, 
+                        "workout": paired,
+                        "today": {day: get_day_workout(day, paired)},
+                        "protein_goal": calories.protein_goal
                     })
                 else:
                     return render(request, 'tracker/index.html', {
                         "goals": goals,
                         "weight": weight,
-                        "calorie_goal":calorie_goal.calorie_goal
+                        "calorie_goal":calories.calorie_goal,
+                        "protein_goal": calories.protein_goal
                     })
             except Food.DoesNotExist:
                 return redirect('food')
@@ -234,9 +239,50 @@ def pair_days(days, workout):
     for day in all_days:
         indices = list(workout)
         if day not in days:
-            result.append((day, {"Rest": "Rest Today"}))
+            result.append({day: {"Rest": "Rest Today"}})
         else:
-            result.append((day, workout[indices[0]]))
-            del workout[indices[0]]
+            if len(indices) == 0:
+                result.append({day: {"Rest": "Rest Today"}})
+            else:
+                result.append({day: {indices[0]: workout[indices[0]]}})
+                del workout[indices[0]]
 
     return result
+
+def get_day_workout(day, workout):
+    for item in workout:
+        for i in item:
+            if i == day:
+                return (item[i])
+            
+def log_activity(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            activity = request.POST['activity']
+            duration = int(request.POST['duration'])
+            details = get_workout_cal(activity, duration)
+            try:
+                cph = details['calories_per_hour']
+                Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = (cph*duration)/60).save()
+                return redirect('index')
+            except IndexError:
+                pass
+        else:
+            return render(request, "tracker/activity.html")
+    else:
+        return redirect('index')
+    
+
+def get_workout_cal(activity, duration):
+    querystring = {"activity": activity, "weight": "180", "duration": str(duration)}
+    url = "https://calories-burned-by-api-ninjas.p.rapidapi.com/v1/caloriesburned"
+    headers = {
+	"x-rapidapi-key": settings.WORKOUT_API_KEY,
+	"x-rapidapi-host": "calories-burned-by-api-ninjas.p.rapidapi.com"
+}
+    
+    response = requests.get(url, headers=headers, params=querystring)
+    try:
+        return response.json()[0]
+    except IndexError:
+        return dict()

@@ -47,3 +47,16 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.current_user} can work out {len(self.days)} days a week"
+    
+
+class Activity_Log(models.Model):
+    current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="activity_by")
+    activity = models.CharField(default="", max_length=20)
+    duration = models.IntegerField(default=0)
+    calories_burned = models.IntegerField(default=0)    ## the user can edit this
+    date_started = models.DateField(default=timezone.now)
+    time_started = models.TimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.current_user} went {self.activity} for {self.duration}"
+# class Log

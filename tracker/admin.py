@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(Stats)
 admin.site.register(Food)
 admin.site.register(Goal)
+admin.site.register(Activity_Log)

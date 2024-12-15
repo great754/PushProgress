@@ -2,29 +2,51 @@
 
 {% block body %}
 <h2>Welcome to Push Progress!</h2>
-
+<style>
+    table, th, td {
+        border: 1px solid black;
+    }
+</style>
 <h3>Your Goals: {{goals}} </h3>
+<h3>Calorie Goal: {{calorie_goal}} calories a day</h3>
+<h3>Protein Goal: {{protein_goal}}g of protein a day</h3>
 <h3>Your Weight {{weight}} lbs</h3>
 {% if workout %}
-<table style="border: 1px solid black">
+<div>
+    <a href="{% url 'activity' %}"><button type="button">Log Activity</button></a>
+</div>
+<table>
     <tr>
         <th>Day</th>
         <th>Workout</th>
     </tr>
     {% for day in workout %}
+        {% for name, exercise in day.items %}
     <tr>
-        <td>{{day|first}}</td>
-        {% for title in day|slice:"1:2" %}
-        <td> {{title}} </td>
+        <td> {{name}} </td>
+        {% for title in exercise %}
+            <td> {{title}} </td>
         {% endfor %}
     </tr>
     {% endfor %}
+    {% endfor %}
 </table>
-<!-- {{ workout }} -->
 {% else %}
 <form action="{% url 'set_dates' %}">
     <input type="submit" value="Set Dates to suggest workout">
 </form>
 {% endif %}
+
+<div>
+    {% for day, workout in today.items %}
+    <h3>Today: {{day}}</h3>
+    {% for title, exercises in workout.items %}
+    <h4>{{title}}</h4>
+    {% for exercise in exercises %}
+    <li>{{exercise}}</li>               <!---- looks different when it's a rest day ---->
+    {% endfor %}
+    {% endfor %}
+    {% endfor %}
+</div>
 
 {% endblock %}
