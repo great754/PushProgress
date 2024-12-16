@@ -98,7 +98,13 @@ def index(request):
                 goals.append(detail.goal)
             weight = details[0].weight
             try:
-                calories = Food.objects.get(current_user = request.user)
+                food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now())
+                total_calories = 0
+                total_protein = 0
+                for food in food_eaten:
+                    total_calories += food.calories
+                    total_protein += food.protein
+                calories = Food.objects.filter(current_user = request.user)[0]
                 if len(Goal.objects.filter(current_user = request.user))> 0:
                     workout = Goal.objects.get(current_user = request.user) 
                     paired = pair_days(workout.days, workout.workout)
@@ -109,14 +115,20 @@ def index(request):
                         "calorie_goal":calories.calorie_goal, 
                         "workout": paired,
                         "today": {day: get_day_workout(day, paired)},
-                        "protein_goal": calories.protein_goal
+                        "protein_goal": calories.protein_goal, 
+                        "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()),
+                        "total_calories": total_calories,
+                        "total_protein": total_protein
                     })
                 else:
                     return render(request, 'tracker/index.html', {
                         "goals": goals,
                         "weight": weight,
                         "calorie_goal":calories.calorie_goal,
-                        "protein_goal": calories.protein_goal
+                        "protein_goal": calories.protein_goal,
+                        "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()), 
+                        "total_calories": total_calories,
+                        "total_protein": total_protein
                     })
             except Food.DoesNotExist:
                 return redirect('food')
@@ -258,20 +270,23 @@ def get_day_workout(day, workout):
 def log_activity(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            activity = request.POST['activity']
-            duration = int(request.POST['duration'])
-            details = get_workout_cal(activity, duration)
             try:
-                cph = details['calories_per_hour']
-                Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = (cph*duration)/60).save()
+                activity = request.POST['activity']
+                duration = int(request.POST['duration'])
+                details = get_workout_cal(activity, duration)
+                try:
+                    cph = details['calories_per_hour']
+                    Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = (cph*duration)/60).save()
+                    return redirect('index')
+                except IndexError:
+                    return redirect('index')
+            except KeyError:
+                Activity_Log(current_user = request.user, activity = "Workout", duration = duration, calories_burned = 450).save()
                 return redirect('index')
-            except IndexError:
-                pass
         else:
             return render(request, "tracker/activity.html")
     else:
         return redirect('index')
-    
 
 def get_workout_cal(activity, duration):
     querystring = {"activity": activity, "weight": "180", "duration": str(duration)}
@@ -286,3 +301,21 @@ def get_workout_cal(activity, duration):
         return response.json()[0]
     except IndexError:
         return dict()
+    
+def log_food(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            food = request.POST["food"]
+            servings = int(request.POST["servings"])
+            total_calories = 0
+            total_protein = 0
+            time = request.POST["time"]
+            for item in get_calories(food):
+                total_calories += item["calories"]
+                total_protein += item["protein_g"]
+            Food_Log(current_user = request.user, food = food, calories = total_calories, protein = total_protein, time_eaten = time).save()
+            return redirect('index')
+        else:
+            return render(request, 'tracker/logfood.html')
+    else:
+        return redirect('login')

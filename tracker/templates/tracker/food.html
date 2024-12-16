@@ -1,35 +1,78 @@
 {% extends "tracker/layout.html" %}
 
 {% block body %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector('#lunch_div').style.display = 'none';
+        document.querySelector('#dinner_div').style.display = 'none';
+        document.querySelector('#snacks_div').style.display = 'none';
+        
+        document.querySelector('#decoy1').onclick = () => {
+            document.querySelector('#breakfast_div').style.display = 'none';
+            document.querySelector('#lunch_div').style.display = 'block';
+            document.querySelector('#dinner_div').style.display = 'none';
+            document.querySelector('#snacks_div').style.display = 'none';
+        }
+        document.querySelector('#decoy2').onclick = () => {
+            document.querySelector('#breakfast_div').style.display = 'none';
+            document.querySelector('#lunch_div').style.display = 'none';
+            document.querySelector('#dinner_div').style.display = 'block';
+            document.querySelector('#snacks_div').style.display = 'none';
+        }
+        document.querySelector('#decoy3').onclick = () => {
+            document.querySelector('#breakfast_div').style.display = 'none';
+            document.querySelector('#lunch_div').style.display = 'none';
+            document.querySelector('#dinner_div').style.display = 'none';
+            document.querySelector('#snacks_div').style.display = 'block';
+        }
+        
+    })
+</script>
 <h3>What would you eat in a typical day</h3>
-<form action="{% url 'food' %}" method="post">
-    {% csrf_token %}
-    <div>
-        <label for="breakfast">What do you eat for breakfast</label>
-        <input type="text" name="breakfast">
-        <label for="breakfast_servings">Servings</label>
-        <input type="number" name="breakfast_servings" max="10" min="1" value="1">
-    </div>
-    <div>
-        <label for="lunch">What do you eat for lunch</label>
-        <input type="text" name="lunch">
-        <label for="lunch_servings">Servings</label>
-        <input type="number" name="lunch_servings" max="10" min="1" value="1">
-    </div>
-    <div>
-        <label for="dinner">What do you eat for dinner</label>
-        <input type="text" name="dinner">
-        <label for="dinner_servings">Servings</label>
-        <input type="number" name="dinner_servings" max="10" min="1" value="1">
-    </div>
-    <div>
-        <label for="snacks">Did you eat any snacks?</label>
-        <input type="text" name="snacks">
-        <label for="dinner_servings">Servings</label>
-        <input type="number" name="snack_servings" max="10" min='1' value="1">
-    </div>
-    <input type="submit">
-</form>
+<div id="form">
+    <form action="{% url 'food' %}" method="post">
+        {% csrf_token %}
+        <div id="breakfast_div">
+            <div>
+                <label for="breakfast">What do you eat for breakfast</label>
+                <input type="text" name="breakfast" required>
+                <label for="breakfast_servings">Servings</label>
+                <input type="number" name="breakfast_servings" max="10" min="1" value="1">
+            </div>
+        <div>
+            <button id="decoy1">Submit</button>
+        </div>
+        </div>
+        <div id="lunch_div">
+            <label for="lunch">What do you eat for lunch</label>
+            <input type="text" name="lunch">
+            <label for="lunch_servings">Servings</label>
+            <input type="number" name="lunch_servings" max="10" min="1" value="1">
+            <div>
+                <button id="decoy2">Submit</button>
+            </div>
+        </div>
+        <div id="dinner_div">
+            <label for="dinner">What do you eat for dinner</label>
+            <input type="text" name="dinner">
+            <label for="dinner_servings">Servings</label>
+            <input type="number" name="dinner_servings" max="10" min="1" value="1">
+            <div>
+                <button id="decoy3">Submit</button>
+            </div>
+        </div>
+        <div id="snacks_div">
+            <label for="snacks">Did you eat any snacks?</label>
+            <input type="text" name="snacks" required>
+            <label for="dinner_servings">Servings</label>
+            <input type="number" name="snack_servings" max="10" min='1' value="1">
+            <div id="submit_button">
+                <input type="submit">
+            </div>
+        </div>
+    </form>
+</div>
+
 
 
 {% endblock %}

@@ -34,11 +34,6 @@ class Food(models.Model):
     def __str__(self):
         return f"{self.current_user} eats {self.old_calories} but goal is {self.calorie_goal}"
     
-# class Goal(models.Model):
-#     current_user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     workout_plan =
-## Class called Calories, that tracks the food the user ate that day, and their goal, and sees if they met their goal
-
 class Goal(models.Model):
     current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="goal_creator")
     workout = models.JSONField(default=dict())
@@ -51,12 +46,23 @@ class Goal(models.Model):
 
 class Activity_Log(models.Model):
     current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="activity_by")
-    activity = models.CharField(default="", max_length=20)
+    activity = models.CharField(default="", max_length=100)
     duration = models.IntegerField(default=0)
     calories_burned = models.IntegerField(default=0)    ## the user can edit this
     date_started = models.DateField(default=timezone.now)
     time_started = models.TimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.current_user} went {self.activity} for {self.duration}"
-# class Log
+        return f"{self.current_user} went {self.activity} for {self.duration} minutes"
+
+class Food_Log(models.Model):
+    current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="eaten_by")
+    food = models.CharField(default="", max_length = 100)
+    calories = models.IntegerField(default=0)
+    protein = models.IntegerField(default=0)
+    date_eaten = models.DateField(default=timezone.now)
+    time_eaten = models.TimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.current_user} ate {self.food} with {self.calories} calories"
+    

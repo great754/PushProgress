@@ -6,6 +6,10 @@
     {% csrf_token %}
     <div>
         <label for="activity">What Activity did you do?</label>
+        <select id="activity">
+            <option value="workout">Workout</option>
+            <option value="other">Other</option>
+        </select>
         <input type="text" name="activity">
     </div>
     <div>

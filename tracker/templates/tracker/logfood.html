@@ -1,0 +1,21 @@
+{% extends "tracker/layout.html" %}
+
+{% block body %}
+<h2>Log Food</h2>
+<form action="{% url 'logfood' %}" method="post">
+    {% csrf_token %}
+    <div>
+        <label for="food">What Food did you eat?</label>
+        <input type="text" name="food">
+        <label for="servings">Servings</label>
+    <input type="number" name="servings" max="10">
+    </div>
+    <div>
+        <label for="time">What time</label>
+        <input type="time" name="time">
+    </div>
+    <div>
+        <input type="submit">
+    </div>
+</form>
+{% endblock %}

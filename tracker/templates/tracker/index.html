@@ -15,6 +15,9 @@
 <div>
     <a href="{% url 'activity' %}"><button type="button">Log Activity</button></a>
 </div>
+<div>
+    <a href="{% url 'logfood' %}"><button type="button">Log Food</button></a>
+</div>
 <table>
     <tr>
         <th>Day</th>
@@ -36,17 +39,40 @@
     <input type="submit" value="Set Dates to suggest workout">
 </form>
 {% endif %}
+<div>
+    <h3>Calories Eaten Today: {{food_eaten}}</h3>
+    <h3>Total protein: {{total_protein}}</h3>
+    <h3>Total calories: {{total_calories}}</h3>
+</div>
 
+{% if workout %}
 <div>
     {% for day, workout in today.items %}
     <h3>Today: {{day}}</h3>
     {% for title, exercises in workout.items %}
+    {% if title == 'Rest' %}
+    <h3>Rest day</h3>
+    {% else %}
     <h4>{{title}}</h4>
+    <table>
+        <tr>
+            <th>Exercise</th>
+            <th>Sets and Reps</th>
+        </tr>
     {% for exercise in exercises %}
-    <li>{{exercise}}</li>               <!---- looks different when it's a rest day ---->
+    <tr>
+        {% for name in exercise.keys %}
+        <td>{{name}}</td>
+        {% endfor %}
+        {% for value in exercise.values %}
+        <td>{{value}}</td>
+        {% endfor %}
+    </tr>
     {% endfor %}
+    </table>
+    {% endif %}
     {% endfor %}
     {% endfor %}
 </div>
-
+{% endif %}
 {% endblock %}
