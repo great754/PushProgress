@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from .models import *
@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 import requests
 from django.conf import settings
 from .workouts import get_workout
-import itertools
+import json
 
 # Create your views here.
 def login_page(request):
@@ -184,7 +184,7 @@ def food(request):
             dinner = get_calories(request.POST["dinner"])
             dinner_servings = int(request.POST["dinner_servings"])
             snacks = get_calories(request.POST["snacks"])
-            snack_servings = int(request.POST["snack_servings"])
+            snack_servings = int(request.POST["snacks_servings"])
 
             old_protein = 0
             total_calories = 0
@@ -319,3 +319,15 @@ def log_food(request):
             return render(request, 'tracker/logfood.html')
     else:
         return redirect('login')
+    
+
+def get_food(request):
+    #if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            cals = data.get('total_cals')
+
+            return JsonResponse({'message': 'received'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    #return JsonResponse({'error': 'Invalid request method'}, status=405)
