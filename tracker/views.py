@@ -104,32 +104,41 @@ def index(request):
                 for food in food_eaten:
                     total_calories += food.calories
                     total_protein += food.protein
-                calories = Food.objects.filter(current_user = request.user)[0]
-                if len(Goal.objects.filter(current_user = request.user))> 0:
-                    workout = Goal.objects.get(current_user = request.user) 
-                    paired = pair_days(workout.days, workout.workout)
-                    day = datetime.now().strftime('%A')
+                try:
+                    calories = Food.objects.filter(current_user = request.user)[0]
+                    if len(Goal.objects.filter(current_user = request.user))> 0:
+                        workout = Goal.objects.get(current_user = request.user) 
+                        paired = pair_days(workout.days, workout.workout)
+                        day = datetime.now().strftime('%A')
+                        return render(request, 'tracker/index.html', {
+                            "goals": goals,
+                            "weight": weight,
+                            "calorie_goal":calories.calorie_goal, 
+                            "workout": paired,
+                            "today": {day: get_day_workout(day, paired)},
+                            "protein_goal": calories.protein_goal, 
+                            "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()),
+                            "total_calories": total_calories,
+                            "total_protein": total_protein
+                        })
+                    else:
+                        return render(request, 'tracker/index.html', {
+                            "goals": goals,
+                            "weight": weight,
+                            "calorie_goal":calories.calorie_goal,
+                            "protein_goal": calories.protein_goal,
+                            "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()), 
+                            "total_calories": total_calories,
+                            "total_protein": total_protein
+                        })
+                except IndexError:
                     return render(request, 'tracker/index.html', {
-                        "goals": goals,
-                        "weight": weight,
-                        "calorie_goal":calories.calorie_goal, 
-                        "workout": paired,
-                        "today": {day: get_day_workout(day, paired)},
-                        "protein_goal": calories.protein_goal, 
-                        "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()),
-                        "total_calories": total_calories,
-                        "total_protein": total_protein
-                    })
-                else:
-                    return render(request, 'tracker/index.html', {
-                        "goals": goals,
-                        "weight": weight,
-                        "calorie_goal":calories.calorie_goal,
-                        "protein_goal": calories.protein_goal,
-                        "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()), 
-                        "total_calories": total_calories,
-                        "total_protein": total_protein
-                    })
+                            "goals": goals,
+                            "weight": weight,
+                            "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()), 
+                            "total_calories": total_calories,
+                            "total_protein": total_protein
+                        })
             except Food.DoesNotExist:
                 return redirect('food')
         else:
@@ -176,56 +185,7 @@ def get_calories(food):
 def food(request):
     # https://www.gicare.com/diets/increasing-calories/
     if request.user.is_authenticated:
-        if request.method == 'POST':
-            breakfast = get_calories(request.POST["breakfast"])
-            breakfast_servings = int(request.POST["breakfast_servings"])
-            lunch  = get_calories(request.POST["lunch"])
-            lunch_servings = int(request.POST["lunch_servings"])
-            dinner = get_calories(request.POST["dinner"])
-            dinner_servings = int(request.POST["dinner_servings"])
-            snacks = get_calories(request.POST["snacks"])
-            snack_servings = int(request.POST["snacks_servings"])
-
-            old_protein = 0
-            total_calories = 0
-            breakfast_calories = 0
-            lunch_calories = 0
-            dinner_calories = 0
-            snack_calories = 0
-            if len(breakfast) == 0:
-                breakfast_calories = 0
-            else:
-                for item in breakfast:
-                    breakfast_calories += (item['calories'] * breakfast_servings)
-                    old_protein += (item['protein_g'] * breakfast_servings)
-
-            if len(lunch) == 0:
-                lunch_calories = 0
-            else:
-                for item in lunch:
-                    lunch_calories += (item['calories'] * lunch_servings)
-                    old_protein += (item['protein_g'] * lunch_servings)
-
-            if len(dinner) == 0:
-                dinner_calories = 0
-            else:
-                for item in dinner:
-                    dinner_calories += (item['calories'] * dinner_servings)
-                    old_protein += (item['protein_g'] * dinner_servings)
-            
-            if len(snacks) == 0:
-                snack_calories = 0
-            else:
-                for item in dinner:
-                    snack_calories += (item['calories'] * snack_servings)
-            total_calories = breakfast_calories+lunch_calories+dinner_calories+snack_calories
-
-            new_calories = total_calories+500
-            curr_weight = (Stats.objects.filter(current_user = request.user))[0]
-            Food(current_user=request.user, old_calories=total_calories, calorie_goal=new_calories, old_protein=old_protein, protein_goal=curr_weight.weight).save()
-            return redirect('index')
-        else:
-            return render(request, "tracker/food.html")
+        return render(request, "tracker/food.html")
     else:
         return redirect('index')
     
@@ -322,12 +282,26 @@ def log_food(request):
     
 
 def get_food(request):
-    #if request.method == 'POST':
+    if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            cals = data.get('total_cals')
-
+            cals = data.get('totalcals')
+            goals = []
+            new_calories = 0
+            details = Stats.objects.filter(current_user = request.user)
+            weight = details[0].weight
+            if len(details)>0:          # if the user already has stats
+                for detail in details:
+                    goals.append(detail.goal)
+            if 'Lose Weight' in goals:
+                new_calories = cals - 500
+            elif 'Gain Weight' in goals:
+                new_calories = cals + 500
+            else:
+                new_calories = cals
+            Food(current_user=request.user, old_calories=cals, calorie_goal=new_calories, old_protein=0, protein_goal=weight).save()
+            #return redirect('index')
             return JsonResponse({'message': 'received'})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    #return JsonResponse({'error': 'Invalid request method'}, status=405)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

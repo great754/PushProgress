@@ -12,8 +12,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
 
-        const csrfToken = '{{ csrf_token }}';
-        document.cookie = `csrftoken=${csrfToken}`;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         function getCookie(name) {
         let cookieValue = null;
@@ -64,7 +63,6 @@
                         calories = 0;
                     }
                     box.value = Math.round(calories);
-                    totalcals += calories;
                 },
                 error: function ajaxError(jqXHR) {
                     console.error('Error: ', jqXHR.responseText);
@@ -85,25 +83,33 @@
         document.querySelector('#snacks_div').style.display = 'none';
         
         document.querySelector('#decoy1').onclick = () => {
+            let calories = document.querySelector('input[name="breakfast_calories"]').value;
+            totalcals = totalcals + Number(calories);
             //getCal(document.querySelector('input[name="breakfast"]').value);
             document.querySelector('#breakfast_div').style.display = 'none';
             document.querySelector('#lunch_div').style.display = 'block';
         }
         document.querySelector('#decoy2').onclick = () => {
+            let calories = document.querySelector('input[name="lunch_calories"]').value;
+            totalcals = totalcals + Number(calories);
             document.querySelector('#lunch_div').style.display = 'none';
             document.querySelector('#dinner_div').style.display = 'block';
         }
         document.querySelector('#decoy3').onclick = () => {
+            let calories = document.querySelector('input[name="dinner_calories"]').value;
+            totalcals = totalcals + Number(calories);
             document.querySelector('#dinner_div').style.display = 'none';
             document.querySelector('#snacks_div').style.display = 'block';
         }
         
         document.querySelector('#submit_button').onclick = () => {
-            fetch('/getfood', {
+            let calories = document.querySelector('input[name="snacks_calories"]').value;
+            totalcals = totalcals + Number(calories);
+            fetch('/getfood/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken' : getCookie('csrftoken')
+                    'X-CSRFToken' : csrfToken
                 },
                 body: JSON.stringify({
                     totalcals: totalcals
@@ -116,6 +122,10 @@
             .catch((error) => {
                 console.error('Error:', error);
             });
+            document.querySelector('form').onsubmit = function() {
+                return true;
+            }
+            document.querySelector('form').submit();
         }
     });
 </script>
@@ -124,7 +134,7 @@
 
 <h3>What would you eat in a typical day</h3>
 <div id="form" onsubmit="return false;">
-    <form action="{% url 'food' %}" method="post">
+    <form action="{% url 'index' %}">
         {% csrf_token %}
         <div id="breakfast_div">
             <div>
@@ -133,7 +143,7 @@
                 <label for="breakfast_servings">Servings</label>
                 <input type="number" name="breakfast_servings" max="10" min="1" value="1">
                 <label for="breakfast_calories">How many calories</label>
-                <input type="number" name="breakfast_calories" max="10000" min="0">
+                <input type="number" name="breakfast_calories" max="10000" min="0" value="0">
             </div>
             <div style="color: blue" class="dontknow">
                 <a id="breakfastdontknow">Don't know?</a>
@@ -148,7 +158,7 @@
             <label for="lunch_servings">Servings</label>
             <input type="number" name="lunch_servings" max="10" min="1" value="1">
             <label for="lunch_calories">How many calories</label>
-            <input type="number" name="lunch_calories" max="10000" min="0">
+            <input type="number" name="lunch_calories" max="10000" min="0" value="0">
             <div style="color: blue" class="dontknow">
                 <a id="lunchdontknow">Don't know?</a>
             </div>
@@ -162,7 +172,7 @@
             <label for="dinner_servings">Servings</label>
             <input type="number" name="dinner_servings" max="10" min="1" value="1">
             <label for="dinner_calories">How many calories</label>
-            <input type="number" name="dinner_calories" max="10000" min="0">
+            <input type="number" name="dinner_calories" max="10000" min="0" value="0">
             <div style="color: blue" class="dontknow">
                 <a id="dinnerdontknow">Don't know?</a>
             </div>
@@ -176,7 +186,7 @@
             <label for="dinner_servings">Servings</label>
             <input type="number" name="snacks_servings" max="10" min='1' value="1">
             <label for="snacks_calories">How many calories</label>
-            <input type="number" name="snacks_calories" max="10000" min="0">
+            <input type="number" name="snacks_calories" max="10000" min="0" value="0">
             <div style="color: blue" class="dontknow">
                 <a id="snacksdontknow">Don't know?</a>
             </div>

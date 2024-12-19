@@ -8,8 +8,12 @@
     }
 </style>
 <h3>Your Goals: {{goals}} </h3>
+{% if calorie_goal %}
 <h3>Calorie Goal: {{calorie_goal}} calories a day</h3>
 <h3>Protein Goal: {{protein_goal}}g of protein a day</h3>
+{% else %}
+<a href="{% url 'food' %}"><button type="button">Set calorie goal</button></a>
+{% endif %}
 <h3>Your Weight {{weight}} lbs</h3>
 {% if workout %}
 <div>
