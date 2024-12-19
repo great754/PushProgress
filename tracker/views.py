@@ -230,19 +230,11 @@ def get_day_workout(day, workout):
 def log_activity(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            try:
-                activity = request.POST['activity']
-                duration = int(request.POST['duration'])
-                details = get_workout_cal(activity, duration)
-                try:
-                    cph = details['calories_per_hour']
-                    Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = (cph*duration)/60).save()
-                    return redirect('index')
-                except IndexError:
-                    return redirect('index')
-            except KeyError:
-                Activity_Log(current_user = request.user, activity = "Workout", duration = duration, calories_burned = 450).save()
-                return redirect('index')
+            activity = request.POST['activity_name']
+            duration = int(request.POST['duration'])
+            calories = int(request.POST['calories'])
+            Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = calories).save()
+            return redirect('index')
         else:
             return render(request, "tracker/activity.html")
     else:
@@ -265,16 +257,16 @@ def get_workout_cal(activity, duration):
 def log_food(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
-            food = request.POST["food"]
-            servings = int(request.POST["servings"])
-            total_calories = 0
-            total_protein = 0
-            time = request.POST["time"]
-            for item in get_calories(food):
-                total_calories += item["calories"]
-                total_protein += item["protein_g"]
-            Food_Log(current_user = request.user, food = food, calories = total_calories, protein = total_protein, time_eaten = time).save()
-            return redirect('index')
+            try:
+                data = json.loads(request.body)
+                cals = data.get('calories')
+                food = data.get('food')
+                protein = data.get('protein')
+                time = data.get('time')
+                Food_Log(current_user = request.user, food = food, calories = cals, protein=protein, time_eaten = time).save()
+                return JsonResponse({'message': 'received'})
+            except json.JSONDecodeError:
+                return JsonResponse({'error': 'Invalid JSON'}, status=400)
         else:
             return render(request, 'tracker/logfood.html')
     else:

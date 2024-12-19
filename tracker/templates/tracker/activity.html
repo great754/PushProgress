@@ -1,23 +1,33 @@
 {% extends "tracker/layout.html" %}
-
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" 
+integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" 
+crossorigin="anonymous">
+</script>
 {% block body %}
 <h2>Log Activity</h2>
-<form action="{% url 'activity' %}" method="post">
+<form action="{% url 'activity' %}" method="post" id="form">
     {% csrf_token %}
     <div>
         <label for="activity">What Activity did you do?</label>
-        <select id="activity">
+        <select id="activity_title" name="activity_title">
             <option value="workout">Workout</option>
             <option value="other">Other</option>
         </select>
-        <input type="text" name="activity">
+        <input type="text" name="activity_name" id="activity_name" style="display: none;">
     </div>
     <div>
         <label for="duration">How long did you do this activity</label>
-    <input type="number" name="duration" max="500">
+        <input type="number" name="duration" max="500" id="duration" value="0" required>
+    </div>
+    <div>
+        <label for="calories">How many calories did you burn</label>
+        <input type="number" name="calories" max="10000" id="calories" value="0" required>
+        <a style="color:blue" id="dontknow">Don't know</a>
     </div>
     <div>
         <input type="submit">
     </div>
 </form>
+<script src="{% static 'tracker/activity.js' %}"></script>
 {% endblock %}

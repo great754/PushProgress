@@ -42,7 +42,6 @@ class Goal(models.Model):
 
     def __str__(self):
         return f"{self.current_user} can work out {len(self.days)} days a week"
-    
 
 class Activity_Log(models.Model):
     current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="activity_by")

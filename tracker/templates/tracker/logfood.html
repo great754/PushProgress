@@ -1,21 +1,35 @@
 {% extends "tracker/layout.html" %}
-
+{% load static %}
 {% block body %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" 
+integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" 
+crossorigin="anonymous">
+</script>
 <h2>Log Food</h2>
-<form action="{% url 'logfood' %}" method="post">
+<form action="{% url 'index' %}" id="form">
     {% csrf_token %}
     <div>
         <label for="food">What Food did you eat?</label>
-        <input type="text" name="food">
+        <input type="text" name="food" id="food" required>
         <label for="servings">Servings</label>
-    <input type="number" name="servings" max="10">
+        <input type="number" name="servings" max="10" id="servings" value="1" required>
+        <label for="calories">Calories</label>
+        <input type="number" name="calories" max="10000" id="calories" value="0" required>
+        <div>
+            <label for="protein">Protein</label>
+            <input type="protein" name="protein" max="300" id="protein" value="0" required>
+        </div>
+        
     </div>
+    <a style="color: blue" id="dontknow">Don't know?</a>
     <div>
         <label for="time">What time</label>
-        <input type="time" name="time">
+        <input type="time" name="time" id="time" required>
     </div>
     <div>
-        <input type="submit">
+        <input type="submit" id="submit_button">
     </div>
 </form>
+
+<script src="{% static 'tracker/log_food.js' %}"></script>
 {% endblock %}
