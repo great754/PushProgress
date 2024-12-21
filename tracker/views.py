@@ -91,14 +91,19 @@ def logout_view(request):
 def index(request):
     ## MAYBE ADD ANOTHER html template that the visiting user not logged in will see
     if request.user.is_authenticated:
+        calories_burned = 0
+        for activity in Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now()):
+            calories_burned += activity.calories_burned
         goals = []
         details = Stats.objects.filter(current_user = request.user)
         if len(details)>0:          # if the user already has stats
             for detail in details:
                 goals.append(detail.goal)
             weight = details[0].weight
+            weight_goal = details[0].weight_goal
+            day = datetime.now().strftime('%A')
             try:
-                food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now())
+                food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now())
                 total_calories = 0
                 total_protein = 0
                 for food in food_eaten:
@@ -109,7 +114,6 @@ def index(request):
                     if len(Goal.objects.filter(current_user = request.user))> 0:
                         workout = Goal.objects.get(current_user = request.user) 
                         paired = pair_days(workout.days, workout.workout)
-                        day = datetime.now().strftime('%A')
                         return render(request, 'tracker/index.html', {
                             "goals": goals,
                             "weight": weight,
@@ -119,7 +123,11 @@ def index(request):
                             "protein_goal": calories.protein_goal, 
                             "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()),
                             "total_calories": total_calories,
-                            "total_protein": total_protein
+                            "total_protein": total_protein,
+                            "date": datetime.now(),
+                            "day": day,
+                            "weight_goal": weight_goal, 
+                            "calories_burned": calories_burned
                         })
                     else:
                         return render(request, 'tracker/index.html', {
@@ -129,7 +137,11 @@ def index(request):
                             "protein_goal": calories.protein_goal,
                             "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()), 
                             "total_calories": total_calories,
-                            "total_protein": total_protein
+                            "total_protein": total_protein,
+                            "date": datetime.now(),
+                            "day": day,
+                            "weight_goal": weight_goal,
+                            "calories_burned": calories_burned
                         })
                 except IndexError:
                     return render(request, 'tracker/index.html', {
@@ -137,7 +149,11 @@ def index(request):
                             "weight": weight,
                             "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=timezone.now()), 
                             "total_calories": total_calories,
-                            "total_protein": total_protein
+                            "total_protein": total_protein,
+                            "date": datetime.now(),
+                            "day": day,
+                            "weight_goal": weight_goal,
+                            "calories_burned": calories_burned
                         })
             except Food.DoesNotExist:
                 return redirect('food')

@@ -1,12 +1,139 @@
 {% extends "tracker/layout.html" %}
 
 {% block body %}
-<h2>Welcome to Push Progress!</h2>
-<style>
-    table, th, td {
-        border: 1px solid black;
-    }
-</style>
+<div id="welcome">
+    <h3>Welcome Back, <strong>{{user.username}}</strong></h3>
+</div>
+<div id="index_date" style="background-color:#BDD4E7; width: 350px; text-align:center; margin: 0 auto; border-radius: 8px;">
+    {{day}}, {{date}}
+</div>
+
+
+<ul id="stats">
+    <div class="stat">
+        <li>
+            <div class="title">
+                Current Weight
+            </div>
+            <div class="info">
+                {{weight}}/{{weight_goal}} lbs
+            </div>
+        </li>
+    </div>
+    <div class="stat">
+        <li>
+            <div class="title">
+                Calories eaten today
+            </div>
+            <div class="info">
+                {{total_calories}}/{{calorie_goal}} kcal
+            </div>
+        </li>
+    </div>
+    <div class="stat">
+        <li>
+            <div class="title">
+                Total protein today
+            </div>
+            <div class="info">
+                {{total_protein}}/{{protein_goal}} g
+            </div>
+        </li>
+    </div>
+    <div class="stat">
+        <li>
+            <div class="title">
+                Calories burned today
+            </div>
+            <div class="info">
+                {{calories_burned}} kcal
+            </div>
+        </li>
+    </div>
+</ul>
+
+<ul id="big-details">
+    {% if workout %}
+    <li>
+        <div class="big-detail">
+            <div class="big-title">
+                Workout Routine
+            </div>
+            <div class="big-table">
+                <table>
+                    <tr>
+                        <th>Day</th>
+                        <th>Workout</th>
+                    </tr>
+                    {% for day in workout %}
+                        {% for name, exercise in day.items %}
+                    <tr>
+                        <td> {{name}} </td>
+                        {% for title in exercise %}
+                            <td> {{title}} </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </li>
+    {% else %}
+    <li>
+        <div>
+            <form action="{% url 'set_dates' %}">
+                <input type="submit" value="Set Dates to suggest workout">
+            </form>
+        </div>
+    </li>
+    {% endif %}
+    <li>
+        <div class="big-detail">
+            <div>
+                Today's Workout
+            </div>
+            <div>
+                {% if workout %}
+            <div class="big-table" style="margin-top: 5px">
+                {% for day, workout in today.items %}
+                {% for title, exercises in workout.items %}
+                {% if title == 'Rest' %}
+                <h3>Rest day</h3>
+                {% else %}
+                <h8><strong>{{title}}</strong></h8>
+                <table>
+                    <tr>
+                        <th>Exercise</th>
+                        <th>Sets and Reps</th>
+                    </tr>
+                {% for exercise in exercises %}
+                <tr>
+                    {% for name in exercise.keys %}
+                    <td>{{name}}</td>
+                    {% endfor %}
+                    {% for value in exercise.values %}
+                    <td>{{value}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </table>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="big-detail">
+            <div class="big-title">
+                
+            </div>
+        </div>
+    </li>
+</ul>
 <h3>Your Goals: {{goals}} </h3>
 {% if calorie_goal %}
 <h3>Calorie Goal: {{calorie_goal}} calories a day</h3>
@@ -44,7 +171,10 @@
 </form>
 {% endif %}
 <div>
-    <h3>Calories Eaten Today: {{food_eaten}}</h3>
+    <h3>Calories Eaten Today: {% for food in food_eaten%}
+                                <li>{{ food }}</li>
+                                {% endfor %}
+    </h3>
     <h3>Total protein: {{total_protein}}</h3>
     <h3>Total calories: {{total_calories}}</h3>
 </div>
