@@ -1,5 +1,9 @@
 table, th, td {
-    border: 1px solid black;
+    border: 1px solid rgba(0, 0, 0, 0.395);
+}
+
+th {
+    background-color: rgb(181, 174, 174);
 }
 
 td {
@@ -25,6 +29,7 @@ td {
 .nav-item {
     margin-right: 10px;
 }
+
 
 #welcome, #index_date {
     font-family: 'Inter';font-size: 22px;
@@ -96,4 +101,52 @@ body {
 
 .big-table table {
     margin: 0 auto;
+}
+
+.form-title {
+    text-align: center;
+    padding-top: 40px;
+}
+
+.form-box {
+    text-align: center;
+    background-color: white;
+    margin: auto;
+    margin-top: 40px;
+    border-radius: 10px;
+}
+
+.text-box {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    height: 66px;
+    width: 376px;
+    background-color: #EFEFEF;
+    border-radius: 10px;
+    padding-left: 15px;
+}
+
+::placeholder {
+    font-weight: bold;
+}
+
+.form-button {
+    background-color: #7a5cf5;
+    height: 44px;
+    width: 173px;
+    border-radius: 10px;
+    border-style: none;
+    font-weight: bold;
+}
+
+.messages {
+    margin-left: 30px;
+    width: 400px;
+    list-style-type: none;
+}
+
+.form-label {
+    margin-top: 10px;
+    margin-left: -183px;
+    margin-bottom:-15px;
 }

@@ -3,25 +3,25 @@
     {% load static %}
     <head>
         <title>Push Progress</title>
-        <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <link rel="stylesheet" href="{% static 'tracker/styles.css' %}">
+        <link href="https://fonts.googleapis.com/css?family=Inter" rel="stylesheet">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'tracker/styles.css' %}">
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <a class="navbar-brand" href="{% url 'index' %}">
-                <i class="fas fa-chart-line"></i> Push Progress
+                <i class="fas fa-chart-line"></i> <strong>Push Progress</strong>
             </a>
-            <div class="container" width="500px">
-            </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div>
-              <ul class="navbar-nav mr-auto">
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+              <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}">
@@ -29,12 +29,14 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}">
-                        <i class="fas fa-clipboard"></i> Log
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-clipboard"></i> Log
                     </a>
-                </li>
-
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="{% url 'activity' %}"style="border-down: 1px; border-style: solid;">Activity</a>
+                      <a class="dropdown-item" href="{% url 'logfood' %}">Food</a>
+                  </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}">
                         <i class="fas fa-user"></i> <strong>{{ user.username }}</strong>
@@ -64,5 +66,7 @@
             {% block body %}
             {% endblock %}
         </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

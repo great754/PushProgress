@@ -1,25 +1,31 @@
-<html lang="en">
-    <h2>Login</h2>
+{% extends "tracker/layout.html" %}
+
+{% block body %}
+{% load static %}
+    <div class="form-box" style="width: 508px; height: 407px;">
+        <h2 class="form-title"><strong>Login</strong></h2>
+        <div class="form">
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li>{{message}}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <input autofocus class="text-box" type="text" name="username" placeholder="Username">
+                <input type="password" class="text-box" name="password" placeholder="Password">
+                <div>
+                    <input class="form-button" type="submit" value="Login">
+                </div>
+            </form>
+        </div>
+        <div style="margin-top: 10px;">
+            Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+        </div>
+    </div>
     {% if message %}
         <div>{{ message }}</div>
     {% endif %}
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li>{{message}}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <div class="form-group">
-            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
-        </div>
-        <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
-        </div>
-        <input class="btn btn-primary" type="submit" value="Login">
-    </form>
-
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
-</html>
+    {% endblock %}

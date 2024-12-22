@@ -1,12 +1,18 @@
 {% extends "tracker/layout.html" %}
 
 {% block body %}
+{% load static %}
 <div id="welcome">
     <h3>Welcome Back, <strong>{{user.username}}</strong></h3>
 </div>
-<div id="index_date" style="background-color:#BDD4E7; width: 350px; text-align:center; margin: 0 auto; border-radius: 8px;">
+<div id="index_date" style="background-color:#BDD4E7; width: 370px; text-align:center; margin: 0 auto; border-radius: 8px;">
     {{day}}, {{date}}
 </div>
+<style>
+    th {
+        background-color: rgb(170, 170, 170);
+    }
+</style>
 
 
 <ul id="stats">
@@ -90,12 +96,21 @@
     {% endif %}
     <li>
         <div class="big-detail">
-            <div>
-                Today's Workout
+            <div class="top-row" style="position: relative; text-align: center;">
+                <div style="display: inline-block;">
+                    Today's Workout
+                </div>
+                <div class="completed-status" style="position: absolute; top: 0; right: 0; margin-right: 10px; margin-top: -10px;">
+                    {% if workout %}
+                    {% if done %}
+                    Completed <i class="fas fa-check green-check" style="color:rgb(4, 172, 4);"></i>
+                    {% else %}
+                    <button><a href="activity">Log Activity</a></button>
+                    {% endif %}
+                    {% endif %}
+                </div>
             </div>
-            <div>
-                {% if workout %}
-            <div class="big-table" style="margin-top: 5px">
+            <div class="big-table" style="margin-top: 5px;">
                 {% for day, workout in today.items %}
                 {% for title, exercises in workout.items %}
                 {% if title == 'Rest' %}
@@ -107,106 +122,39 @@
                         <th>Exercise</th>
                         <th>Sets and Reps</th>
                     </tr>
-                {% for exercise in exercises %}
-                <tr>
-                    {% for name in exercise.keys %}
-                    <td>{{name}}</td>
+                    {% for exercise in exercises %}
+                    <tr>
+                        {% for name in exercise.keys %}
+                        <td>{{name}}</td>
+                        {% endfor %}
+                        {% for value in exercise.values %}
+                        <td>{{value}}</td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                    {% for value in exercise.values %}
-                    <td>{{value}}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
                 </table>
                 {% endif %}
                 {% endfor %}
                 {% endfor %}
             </div>
-            {% endif %}
-            </div>
         </div>
     </li>
+    
     <li>
         <div class="big-detail">
             <div class="big-title">
-                
+                Calories burned vs eaten in past 7 days
             </div>
+            <canvas id="myChart" style="width:50%;max-width:450px; height: 150px; margin-top: 10px; text-align: center;"></canvas>
         </div>
     </li>
 </ul>
-<h3>Your Goals: {{goals}} </h3>
-{% if calorie_goal %}
-<h3>Calorie Goal: {{calorie_goal}} calories a day</h3>
-<h3>Protein Goal: {{protein_goal}}g of protein a day</h3>
-{% else %}
-<a href="{% url 'food' %}"><button type="button">Set calorie goal</button></a>
-{% endif %}
-<h3>Your Weight {{weight}} lbs</h3>
-{% if workout %}
-<div>
-    <a href="{% url 'activity' %}"><button type="button">Log Activity</button></a>
-</div>
-<div>
-    <a href="{% url 'logfood' %}"><button type="button">Log Food</button></a>
-</div>
-<table>
-    <tr>
-        <th>Day</th>
-        <th>Workout</th>
-    </tr>
-    {% for day in workout %}
-        {% for name, exercise in day.items %}
-    <tr>
-        <td> {{name}} </td>
-        {% for title in exercise %}
-            <td> {{title}} </td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    {% endfor %}
-</table>
-{% else %}
-<form action="{% url 'set_dates' %}">
-    <input type="submit" value="Set Dates to suggest workout">
-</form>
-{% endif %}
-<div>
-    <h3>Calories Eaten Today: {% for food in food_eaten%}
-                                <li>{{ food }}</li>
-                                {% endfor %}
-    </h3>
-    <h3>Total protein: {{total_protein}}</h3>
-    <h3>Total calories: {{total_calories}}</h3>
-</div>
-
-{% if workout %}
-<div>
-    {% for day, workout in today.items %}
-    <h3>Today: {{day}}</h3>
-    {% for title, exercises in workout.items %}
-    {% if title == 'Rest' %}
-    <h3>Rest day</h3>
-    {% else %}
-    <h4>{{title}}</h4>
-    <table>
-        <tr>
-            <th>Exercise</th>
-            <th>Sets and Reps</th>
-        </tr>
-    {% for exercise in exercises %}
-    <tr>
-        {% for name in exercise.keys %}
-        <td>{{name}}</td>
-        {% endfor %}
-        {% for value in exercise.values %}
-        <td>{{value}}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    </table>
-    {% endif %}
-    {% endfor %}
+<script src="{% static 'tracker/index.js' %}"></script>
+<div id="day-pairs" style="display: none">
+    {% for day, cal, eaten in past_days %}
+    <p class="days">{{day}}</p>
+    <p class="cals">{{cal}}</p>
+    <p class="eaten">{{eaten}}</p>
     {% endfor %}
 </div>
-{% endif %}
 {% endblock %}

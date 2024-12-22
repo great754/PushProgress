@@ -66,29 +66,15 @@ document.addEventListener("DOMContentLoaded", () => {
         let totalfood = document.querySelector('#food').value;
         totalcals = Number(box.value);
         totalprotein = Number(proteinbox.value);
+        document.querySelector('#hidden-food').value = totalfood;
+        document.querySelector('#hidden-calories').value = totalcals;
+        document.querySelector('#hidden-protein').value = totalprotein;
+        document.querySelector('#hidden-time').value = time;
         console.log('submitted');
         console.log(totalfood);
         event.preventDefault();
-        fetch('/logfood/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken' : csrfToken
-            },
-            body: JSON.stringify({
-                food: totalfood,
-                calories: totalcals, 
-                protein: totalprotein,
-                time: time
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-        form.submit();
+        const form2 = document.querySelector('#hidden-form');
+        form2.submit();
+        //form.submit();
     })
 })

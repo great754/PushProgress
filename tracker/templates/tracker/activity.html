@@ -5,29 +5,39 @@ integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
 crossorigin="anonymous">
 </script>
 {% block body %}
-<h2>Log Activity</h2>
-<form action="{% url 'activity' %}" method="post" id="form">
-    {% csrf_token %}
-    <div>
-        <label for="activity">What Activity did you do?</label>
-        <select id="activity_title" name="activity_title">
-            <option value="workout">Workout</option>
-            <option value="other">Other</option>
-        </select>
-        <input type="text" name="activity_name" id="activity_name" style="display: none;">
+<div class="form-box" style="width: 508px; height: 500px;">
+    <h2 class="form-title"><strong>Log Activity</strong></h2>
+    <div class="form">
+        <form action="{% url 'activity' %}" method="post" id="form">
+            {% csrf_token %}
+            <div class="form-label">
+                What activity did you do?
+            </div>
+            <select id="activity_title" name="activity_title" class="text-box">
+                <option value="workout">Workout</option>
+                <option value="other">Other</option>
+            </select>
+            <div style="margin-left: 65px;">
+                <input type="text" name="activity_name" id="activity_name" style="display: none;" class="text-box" placeholder="Activity Name">
+            </div>
+            <div class="form-label" style="margin-right: 85px;">
+                For how long?
+            </div>
+            <div style=" margin-right: 94.5px;">
+                <input type="number" name="duration" style="width: 240px;" max="500" id="duration" value="0" class="text-box" required> mins
+            </div>
+            <div class="form-label" style="margin-right: 72px;">
+                Calories burned
+            </div>
+            <div style="margin-right: 43px;">
+                <input type="number" name="calories" style="width: 240px;" max="10000" id="calories" value="0" class="text-box" required> 
+                <a style="color:blue" id="dontknow">Don't know</a>
+            </div>
+            <div style="margin-top: 20px;">
+                <input class="form-button" type="submit" value="Log Activity">
+            </div>
+        </form>
     </div>
-    <div>
-        <label for="duration">How long did you do this activity</label>
-        <input type="number" name="duration" max="500" id="duration" value="0" required>
-    </div>
-    <div>
-        <label for="calories">How many calories did you burn</label>
-        <input type="number" name="calories" max="10000" id="calories" value="0" required>
-        <a style="color:blue" id="dontknow">Don't know</a>
-    </div>
-    <div>
-        <input type="submit">
-    </div>
-</form>
+</div>
 <script src="{% static 'tracker/activity.js' %}"></script>
 {% endblock %}

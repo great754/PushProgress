@@ -5,31 +5,47 @@
 integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" 
 crossorigin="anonymous">
 </script>
-<h2>Log Food</h2>
-<form action="{% url 'index' %}" id="form">
-    {% csrf_token %}
-    <div>
-        <label for="food">What Food did you eat?</label>
-        <input type="text" name="food" id="food" required>
-        <label for="servings">Servings</label>
-        <input type="number" name="servings" max="10" id="servings" value="1" required>
-        <label for="calories">Calories</label>
-        <input type="number" name="calories" max="10000" id="calories" value="0" required>
-        <div>
-            <label for="protein">Protein</label>
-            <input type="protein" name="protein" max="300" id="protein" value="0" required>
-        </div>
-        
-    </div>
-    <a style="color: blue" id="dontknow">Don't know?</a>
-    <div>
-        <label for="time">What time</label>
-        <input type="time" name="time" id="time" required>
-    </div>
-    <div>
-        <input type="submit" id="submit_button">
-    </div>
-</form>
+<div class="form-box" style="width: 508px; height: 500px;">
+    <h2 class="form-title"><strong>Log Food</strong></h2>
+    <div class="form">
+        <form action="{% url 'logfood' %}" method="post" id="form">
+            {% csrf_token %}
+            <div class="form-label" style="margin-left: -10px;">
+                What food did you eat? &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Servings
+            </div>
+            <div style="margin-right: 7px;">
+                <input type="text" name="food" id="food" class="text-box" style="width:240px;" required autofocus>
+                <input type="number" name="servings" max="10" id="servings" value="1" class="text-box" style="width: 80px; margin-left:50px;" required>
+            </div>
+            <div style="margin-left: 65px;">
+                <input type="text" name="activity_name" id="activity_name" style="display: none;" class="text-box" placeholder="Activity Name">
+            </div>
 
+            <div>
+            <div class="form-label" style="margin-right: 130px">
+                Calories
+            </div>
+            <input type="number" name="calories" max="10000" id="calories" value="0" class="text-box" style="width:240px; margin-right: 43.5px;" required>
+            <a style="color: blue" id="dontknow">Don't know?</a>
+            </div>
+            <div class="form-label" style="margin-right: 140px;">Protein</div>
+            <div>
+                <input type="protein" name="protein" max="300" id="protein" value="0" class="text-box" style="width: 200px;" required>
+                <input type="time" name="time" id="time" class="text-box" style="width:130px; margin-left:48px;" required>
+            </div>
+            <div style="margin-top: 20px;">
+                <input class="form-button" type="submit" id="submit_button" value="Log Food">
+            </div>
+        </form>
+    </div>
+</div>
+<form action="{% url 'logfood' %}" id="hidden-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" id="hidden-food" name="hidden-food">
+    <input type="hidden" id="hidden-calories" name="hidden-calories">
+    <input type="hidden" id="hidden-protein" name="hidden-protein">
+    <input type="hidden" id="hidden-time" name="hidden-time">
+</form>
 <script src="{% static 'tracker/log_food.js' %}"></script>
 {% endblock %}
