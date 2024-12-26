@@ -1,118 +1,261 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let totalCals = 0;
+    let breakfastTimes = 1;
+    let lunchTimes = 1;
+    let dinnerTimes = 1;
+    let snackTimes = 1;
 
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.startsWith(name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
+    const breakfastNext = document.querySelector('#decoysubmit1');
+    const lunchNext = document.querySelector('#decoysubmit2');
+    const lunchPrev = document.querySelector('#previous1');
+    const dinnerNext = document.querySelector('#decoysubmit3');
+    const dinnerPrev = document.querySelector('#previous2');
+    const snacksSubmit = document.querySelector('#submit-button');
+    const snacksPrev = document.querySelector('#previous3');
+
+    breakfastNext.addEventListener("click", () => {
+        document.querySelector('#breakfast-form').style.display = 'none';
+        document.querySelector('#lunch-form').style.display = 'block';
+    })
+
+    lunchNext.addEventListener("click", () => {
+        document.querySelector('#lunch-form').style.display = 'none';
+        document.querySelector('#dinner-form').style.display = 'block';
+    })
+
+    lunchPrev.addEventListener("click", () => {
+        document.querySelector('#breakfast-form').style.display = 'block';
+        document.querySelector('#lunch-form').style.display = 'none';
+    })
+
+    dinnerNext.addEventListener("click", () => {
+        document.querySelector('#snacks-form').style.display = 'block';
+        document.querySelector('#dinner-form').style.display = 'none';
+    })
+
+    dinnerPrev.addEventListener("click", () => {
+        document.querySelector('#lunch-form').style.display = 'block';
+        document.querySelector('#dinner-form').style.display = 'none';
+    })
+
+    snacksPrev.addEventListener("click", () => {
+        document.querySelector('#dinner-form').style.display = 'block';
+        document.querySelector('#snacks-form').style.display = 'none';
+    })
+
+    snacksSubmit.addEventListener("click", () => {
+        const calories = document.querySelectorAll('.calories');
+        for (let i = 0; i < calories.length; i++){
+            const calorie = Number(calories[i].value);
+            totalCals += calorie; 
         }
-    }
-    return cookieValue;
-}
+        document.querySelector('#old-calories').value = totalCals;
+        document.querySelector('#hidden-form').submit();
+    })
 
-
-    let totalcals = 0;
-    function getCal(food_id, button_id, box_id, serving_id) {
-        let button = document.querySelector(button_id);
-        let box = document.querySelector(box_id);
-        button.onclick = () => {
-            let food = document.querySelector(food_id).value;
-            let servings = document.querySelector(serving_id).value;
-            $.ajax({
+    // function that fetches calories and sets the box to it
+    function getCal(food, calBox, servings) {
+        $.ajax({
             method: 'GET',
             url: 'https://api.calorieninjas.com/v1/nutrition?query=' + food,
             headers: { 'X-Api-Key': '0A4UID/vDwQwBEgxYj5rsw==et2WzgYuUeN89gMV'},
             contentType: 'application/json',
             success: function(result) {
                 console.log(result);
-                items = result.items;
+                let items = result.items;
                 let calories = 0;
                 let protein = 0;
                 if (items.length > 1) {
-                    for (let i = 0; i < items.length; i++){
+                    for (let i = 0; i < items.length; i++) {
                         calories += items[i].calories * servings;
                         protein += items[i].protein_g * servings;
-                        console.log(calories)
                     }
                 } else if (items.length === 1) {
-                    console.log(items[0]);
                     calories = items[0].calories * servings;
-                    protein = items[0].protein_g;
-                }
-
-                else {
+                    protein = items[0].protein_g * servings;
+                } else {
                     calories = 0;
                 }
-                box.value = Math.round(calories);
+                calBox.value = Math.round(calories);
             },
             error: function ajaxError(jqXHR) {
                 console.error('Error: ', jqXHR.responseText);
             }
         });
-        }
     }
-    
-    getCal('input[name="breakfast"]', "#breakfastdontknow", 'input[name="breakfast_calories"]', 'input[name="breakfast_servings"]');
-    getCal('input[name="lunch"]', "#lunchdontknow", 'input[name="lunch_calories"]', 'input[name="lunch_servings"]');
-    getCal('input[name="dinner"]', "#dinnerdontknow", 'input[name="dinner_calories"]', 'input[name="dinner_servings"]');
-    getCal('input[name="snacks"]', "#snacksdontknow", 'input[name="snacks_calories"]', 'input[name="snacks_servings"]');
 
-    
-    
-    document.querySelector('#lunch_div').style.display = 'none';
-    document.querySelector('#dinner_div').style.display = 'none';
-    document.querySelector('#snacks_div').style.display = 'none';
-    
-    document.querySelector('#decoy1').onclick = () => {
-        let calories = document.querySelector('input[name="breakfast_calories"]').value;
-        totalcals = totalcals + Number(calories);
-        //getCal(document.querySelector('input[name="breakfast"]').value);
-        document.querySelector('#breakfast_div').style.display = 'none';
-        document.querySelector('#lunch_div').style.display = 'block';
+
+    function modifyBreakfastCount(value) {
+        breakfastTimes = value;
     }
-    document.querySelector('#decoy2').onclick = () => {
-        let calories = document.querySelector('input[name="lunch_calories"]').value;
-        totalcals = totalcals + Number(calories);
-        document.querySelector('#lunch_div').style.display = 'none';
-        document.querySelector('#dinner_div').style.display = 'block';
+
+    function modifyLunchCount(value) {
+        lunchTimes = value;
     }
-    document.querySelector('#decoy3').onclick = () => {
-        let calories = document.querySelector('input[name="dinner_calories"]').value;
-        totalcals = totalcals + Number(calories);
-        document.querySelector('#dinner_div').style.display = 'none';
-        document.querySelector('#snacks_div').style.display = 'block';
+
+    function modifyDinnerCount(value) {
+        dinnerTimes = value;
     }
-    
-    document.querySelector('#submit_button').onclick = () => {
-        let calories = document.querySelector('input[name="snacks_calories"]').value;
-        totalcals = totalcals + Number(calories);
-        fetch('/getfood/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken' : csrfToken
-            },
-            body: JSON.stringify({
-                totalcals: totalcals
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-        document.querySelector('form').onsubmit = function() {
-            return true;
+
+    function modifySnacksCount(value) {
+        snackTimes = value;
+    }
+
+    // function that creates a new div, and adds the name element, servings, and calories.
+    // it takes the class names...
+    function addDiv(meal, divId, mealCount){
+        const bigDiv = document.querySelector(divId);
+
+
+        const newDiv = document.createElement("div");
+        const inputLabel = document.createElement("label");
+        const newInput = document.createElement("input");
+        const servingsLabel = document.createElement("label");
+        const newServings = document.createElement("input");
+        const caloriesLabel = document.createElement("label");
+        const newCalories = document.createElement("input");
+        const dontKnow = document.createElement("a");
+
+        bigDiv.appendChild(newDiv);             // add the new div to the original div
+        newDiv.appendChild(inputLabel);
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(servingsLabel);
+        newDiv.appendChild(newServings);
+        newDiv.appendChild(caloriesLabel);
+        newDiv.appendChild(newCalories);
+        newDiv.appendChild(dontKnow);
+        
+        newDiv.classList.add(meal + "-div");
+        newDiv.id = meal + "-div" + mealCount;
+        newInput.classList.add(meal + "-name");
+        newInput.id = meal + "-name" + mealCount;
+        newInput.name=meal + "-name";
+        //inputLabel.for = meal + "-name";
+        inputLabel.textContent = "Food name";
+        servingsLabel.textContent = "Servings";
+        caloriesLabel.textContent = "Calories";
+        newCalories.id = meal + "-calories" + mealCount;
+        newCalories.type = "number";
+        newCalories.value = 0;
+        newServings.type = "number";
+        newServings.value = 1;
+        dontKnow.classList.add('dontknow');
+        dontKnow.id = 'dontknow' + mealCount;
+        dontKnow.textContent = "Don't Know?";
+        newCalories.classList.add('calories');
+        
+        if (meal === 'breakfast'){
+            modifyBreakfastCount(breakfastTimes+1);
+        } else if (meal === 'lunch') {
+            modifyLunchCount(lunchTimes+1);
+        } else if (meal == 'dinner') {
+            modifyDinnerCount(dinnerTimes+1);
+        } else {
+            modifySnacksCount(snackTimes+1);
         }
-        document.querySelector('form').submit();
+
+        dontKnow.addEventListener("click", () => {
+            getCal(newInput.value, newCalories, newServings.value);
+        });
+    };
+
+
+    function removeDiv(divId, meal, mealCount) {
+        let divs = document.querySelectorAll(divId);
+        if (divs.length > 0) {
+            divs[divs.length - 1].remove();
+
+            if (meal === 'breakfast'){
+                modifyBreakfastCount(breakfastTimes-1);
+            } else if (meal === 'lunch') {
+                modifyLunchCount(lunchTimes-1);
+            } else if (meal == 'dinner') {
+                modifyDinnerCount(dinnerTimes-1);
+            } else {
+                modifySnacksCount(snackTimes-1);
+            }
+        }
     }
+
+
+
+////////////////////////////////   BREAKFAST   ///////////////////////////////////////////////////////
+    const breakfast_add = document.querySelector('#breakfastaddmore');      // button
+    breakfast_add.addEventListener("click", () => {
+        if (breakfastTimes < 4) {
+            addDiv("breakfast", "#breakfast-form", breakfastTimes);
+        }
+    });
+
+
+    const breakfast_remove = document.querySelector('#breakfastremove');
+    breakfast_remove.addEventListener("click", () => {
+        removeDiv('.breakfast-div', "breakfast", breakfastTimes);
+    });
+
+
+    document.querySelector("#breakfastdontknow").addEventListener("click", () => {
+        getCal(document.querySelector('#breakfast-name0').value, document.querySelector('#breakfast-calories0'), document.querySelector('#breakfast-servings0').value);
+    });
+
+
+////////////////////////////   LUNCH   ////////////////////////////////////
+    const lunch_add = document.querySelector('#lunchaddmore');      // button
+    lunch_add.addEventListener("click", () => {
+        if (lunchTimes < 4) {
+            addDiv("lunch", "#lunch-form", lunchTimes);
+        }
+    });
+
+
+    const lunch_remove = document.querySelector('#lunchremove');
+    lunch_remove.addEventListener("click", () => {
+        removeDiv('.lunch-div', "lunch", lunchTimes);
+    });
+
+
+    document.querySelector("#lunchdontknow").addEventListener("click", () => {
+        getCal(document.querySelector('#lunch-name0').value, document.querySelector('#lunch-calories0'), document.querySelector('#lunch-servings0').value);
+    });
+
+
+///////////////////////////   DINNER   ///////////////////////////////////////////////////
+
+    const dinner_add = document.querySelector('#dinneraddmore');      // button
+    dinner_add.addEventListener("click", () => {
+        if (dinnerTimes < 4) {
+            addDiv("dinner", "#dinner-form", dinnerTimes);
+        }
+    });
+
+
+    const dinner_remove = document.querySelector('#dinnerremove');
+    dinner_remove.addEventListener("click", () => {
+        removeDiv('.dinner-div', "dinner", dinnerTimes);
+    });
+
+
+    document.querySelector("#dinnerdontknow").addEventListener("click", () => {
+        getCal(document.querySelector('#dinner-name0').value, document.querySelector('#dinner-calories0'), document.querySelector('#dinner-servings0').value);
+    });
+
+    //////////////////////////////   SNACKS   /////////////////////////////////////
+    const snacks_add = document.querySelector('#snacksaddmore');      // button
+    snacks_add.addEventListener("click", () => {
+        if (snackTimes < 4) {
+            addDiv("snacks", "#snacks-form", snackTimes);
+        }
+    });
+
+
+    const snacks_remove = document.querySelector('#snacksremove');
+    snacks_remove.addEventListener("click", () => {
+        removeDiv('.snacks-div', "snacks", snackTimes);
+    });
+
+
+    document.querySelector("#snacksdontknow").addEventListener("click", () => {
+        getCal(document.querySelector('#snacks-name0').value, document.querySelector('#snacks-calories0'), document.querySelector('#snacks-servings0').value);
+    });
 });

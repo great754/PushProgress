@@ -92,106 +92,112 @@ def logout_view(request):
 def index(request):
     ## MAYBE ADD ANOTHER html template that the visiting user not logged in will see
     if request.user.is_authenticated:
-        calories_burned = 0
-        for activity in Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now()):
-            calories_burned += activity.calories_burned
-        goals = []
-        details = Stats.objects.filter(current_user = request.user)
-        day = datetime.now().strftime('%A')
-        today = datetime.now()
-        past_7_days = []
-        for i in range(0, 7):
-            past_day = today - timedelta(days=i)
-            workout_done = Activity_Log.objects.filter(current_user = request.user, date_started = past_day)
-            food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten = past_day)
-            cals_eaten = 0
-            wrkt_cals = 0
-            for food in food_eaten:
-                cals_eaten += food.calories
-            if len(workout_done) == 0:
-                past_7_days.append((past_day.strftime('%A'), 0, cals_eaten))
-            else:
-                for workout in workout_done:
-                    wrkt_cals += workout.calories_burned
-                past_7_days.append((past_day.strftime('%A'), wrkt_cals, cals_eaten))
-        past_7_days.reverse()
-        if len(details)>0:          # if the user already has stats
-            for detail in details:
-                goals.append(detail.goal)
-            weight = details[0].weight
-            weight_goal = details[0].weight_goal
-            try:
-                food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now())
-                total_calories = 0
-                total_protein = 0
+        if len(Food.objects.filter(current_user = request.user)) > 0:
+            calories_burned = 0
+            for activity in Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now()):
+                calories_burned += activity.calories_burned
+            goals = []
+            details = Stats.objects.filter(current_user = request.user)
+            day = datetime.now().strftime('%A')
+            today = datetime.now()
+            past_7_days = []
+            for i in range(0, 7):
+                past_day = today - timedelta(days=i)
+                workout_done = Activity_Log.objects.filter(current_user = request.user, date_started = past_day)
+                food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten = past_day)
+                cals_eaten = 0
+                wrkt_cals = 0
                 for food in food_eaten:
-                    total_calories += food.calories
-                    total_protein += food.protein
+                    cals_eaten += food.calories
+                if len(workout_done) == 0:
+                    past_7_days.append((past_day.strftime('%A'), 0, cals_eaten))
+                else:
+                    for workout in workout_done:
+                        wrkt_cals += workout.calories_burned
+                    past_7_days.append((past_day.strftime('%A'), wrkt_cals, cals_eaten))
+            past_7_days.reverse()
+            if len(details)>0:          # if the user already has stats
+                for detail in details:
+                    goals.append(detail.goal)
+                weight = details[0].weight
+                weight_goal = details[0].weight_goal
                 try:
-                    calories = Food.objects.filter(current_user = request.user)[0]
-                    if len(Goal.objects.filter(current_user = request.user))> 0:
+                    food_eaten = Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now())
+                    total_calories = 0
+                    total_protein = 0
+                    for food in food_eaten:
+                        total_calories += food.calories
+                        total_protein += food.protein
+                    try:
+                        calories = Food.objects.filter(current_user = request.user)[0]      # gets the first food set
+                        if len(Goal.objects.filter(current_user = request.user))> 0:
+                            workout = Goal.objects.get(current_user = request.user)
+                            paired = pair_days(workout.days, workout.workout)
+                            return_dict = {
+                                "goals": goals,
+                                "weight": weight,
+                                "calorie_goal":calories.calorie_goal, 
+                                "workout": paired,
+                                "today": {day: get_day_workout(day, paired)},
+                                "protein_goal": calories.protein_goal, 
+                                "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()),
+                                "total_calories": total_calories,
+                                "total_protein": total_protein,
+                                "date": datetime.now(),
+                                "day": day,
+                                "weight_goal": weight_goal, 
+                                "calories_burned": calories_burned,
+                                "past_days": past_7_days}
+                            
+                            done = Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now(), activity="Workout")
+                            if len(done) > 0:
+                                return_dict["done"] = "Done"
+                            return render(request, 'tracker/index.html', return_dict)
+                        else:
+                            return_dict = {
+                                "goals": goals,
+                                "weight": weight,
+                                "calorie_goal":calories.calorie_goal,
+                                "protein_goal": calories.protein_goal,
+                                "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()), 
+                                "total_calories": total_calories,
+                                "total_protein": total_protein,
+                                "date": datetime.now(),
+                                "day": day,
+                                "weight_goal": weight_goal,
+                                "calories_burned": calories_burned,
+                            }
+                            done = Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now(), activity="Workout")
+                            if len(done) > 0:
+                                return_dict["done"] = "Done"
+                            return render(request, 'tracker/index.html', return_dict)
+                    except IndexError:
                         workout = Goal.objects.get(current_user = request.user)
                         paired = pair_days(workout.days, workout.workout)
                         return_dict = {
-                            "goals": goals,
-                            "weight": weight,
-                            "calorie_goal":calories.calorie_goal, 
-                            "workout": paired,
-                            "today": {day: get_day_workout(day, paired)},
-                            "protein_goal": calories.protein_goal, 
-                            "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()),
-                            "total_calories": total_calories,
-                            "total_protein": total_protein,
-                            "date": datetime.now(),
-                            "day": day,
-                            "weight_goal": weight_goal, 
-                            "calories_burned": calories_burned,
-                            "past_days": past_7_days}
-                        
+                            #######################################################
+                                "goals": goals,
+                                "weight": weight,
+                                "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()), 
+                                "total_calories": total_calories,
+                                "total_protein": total_protein,
+                                "date": datetime.now(),
+                                "day": day,
+                                "weight_goal": weight_goal,
+                                "calories_burned": calories_burned,
+                                "past_days": past_7_days,
+                                "workout": paired
+                            }
                         done = Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now(), activity="Workout")
                         if len(done) > 0:
                             return_dict["done"] = "Done"
                         return render(request, 'tracker/index.html', return_dict)
-                    else:
-                        return_dict = {
-                            "goals": goals,
-                            "weight": weight,
-                            "calorie_goal":calories.calorie_goal,
-                            "protein_goal": calories.protein_goal,
-                            "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()), 
-                            "total_calories": total_calories,
-                            "total_protein": total_protein,
-                            "date": datetime.now(),
-                            "day": day,
-                            "weight_goal": weight_goal,
-                            "calories_burned": calories_burned,
-                            "past_days": past_7_days,
-                        }
-                        done = Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now(), activity="Workout")
-                        if len(done) > 0:
-                            return_dict["done"] = "Done"
-                        return render(request, 'tracker/index.html', return_dict)
-                except IndexError:
-                    return_dict = {
-                            "goals": goals,
-                            "weight": weight,
-                            "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()), 
-                            "total_calories": total_calories,
-                            "total_protein": total_protein,
-                            "date": datetime.now(),
-                            "day": day,
-                            "weight_goal": weight_goal,
-                            "calories_burned": calories_burned,
-                            "past_days": past_7_days
-                        }
-                    done = Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now(), activity="Workout")
-                    if len(done) > 0:
-                        return_dict["done"] = "Done"
-                    return render(request, 'tracker/index.html', return_dict)
-            except Food.DoesNotExist:
-                return redirect('food')
+                except Food.DoesNotExist:
+                    return redirect('food')
+            else:
+                return redirect('set')
         else:
-            return redirect('set')
+            return redirect('food')
     else:
         return redirect('login')
 
@@ -205,12 +211,12 @@ def set_goal(request):
                 weight = request.POST["weight"]
                 heightft = request.POST["height_ft"]
                 heightin = request.POST["height_in"]
-                height = int(heightft) + int(heightin)
+                height = (int(heightft)*12) + int(heightin)
                 goals = request.POST.getlist("goal")
                 weight_goal = request.POST["weight_goal"]
                 for goal in goals:
                     Stats(current_user = request.user, goal = goal, weight = weight, weight_goal = weight_goal, height = height).save()
-                return redirect("index")
+                return redirect("food")
             else:
                 stats_choices = Stats.GOAL_CHOICES
                 choices = []
@@ -233,10 +239,28 @@ def get_calories(food):
 
 def food(request):
     # https://www.gicare.com/diets/increasing-calories/
-    if request.user.is_authenticated:
-        return render(request, "tracker/food.html")
+    if request.method == 'POST':
+        details = Stats.objects.filter(current_user = request.user)
+        weight = details[0].weight
+        goals = []
+        new_calories = 0
+        old_calories = int(request.POST["old-calories"])
+
+        if len(details)>0:          # if the user already has stats
+            for detail in details:
+                goals.append(detail.goal)
+        if 'Lose Weight' in goals:
+            new_calories = old_calories - 500
+        elif 'Gain Weight' in goals:
+            new_calories = old_calories + 500
+        else:
+            new_calories = old_calories
+        Food(current_user=request.user, old_calories=old_calories, calorie_goal=new_calories, old_protein=0, protein_goal=weight).save()
+        return redirect('set_dates')
     else:
-        return redirect('index')
+        return render(request, "tracker/food.html")
+
+
     
 ## sets the workout routine
 def set_dates(request):
@@ -319,29 +343,3 @@ def log_food(request):
             return render(request, 'tracker/logfood.html')
     else:
         return redirect('login')
-    
-
-def get_food(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            cals = data.get('totalcals')
-            goals = []
-            new_calories = 0
-            details = Stats.objects.filter(current_user = request.user)
-            weight = details[0].weight
-            if len(details)>0:          # if the user already has stats
-                for detail in details:
-                    goals.append(detail.goal)
-            if 'Lose Weight' in goals:
-                new_calories = cals - 500
-            elif 'Gain Weight' in goals:
-                new_calories = cals + 500
-            else:
-                new_calories = cals
-            Food(current_user=request.user, old_calories=cals, calorie_goal=new_calories, old_protein=0, protein_goal=weight).save()
-            #return redirect('index')
-            return JsonResponse({'message': 'received'})
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)

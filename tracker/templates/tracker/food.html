@@ -7,59 +7,81 @@ crossorigin="anonymous">
 </script>
 
 <h3>What would you eat in a typical day</h3>
-<div id="form" onsubmit="return false;">
-    <form action="{% url 'index' %}">
+
+<div id="breakfast-form">
+    <h1>Breakfast</h1>
+    Food name
+    <input type="text" id="breakfast-name0" class="breakfast-name" name="breakfast-name" required>
+    Servings
+    <input type="number" id="breakfast-servings0" min="1" max="100" value="1" required>
+    Calories
+    <input type="number" id="breakfast-calories0" class="calories" min="0" max="10000" value="0" required>
+    <a style="color: blue" id="breakfastdontknow" class="dontknow">Don't know?</a>
+    <button id="breakfastaddmore">Add item</button>
+    <button id="breakfastremove">Remove item</button>
+    <div>
+        <button id="decoysubmit1">Next</button>
+    </div>
+</div>
+
+
+
+<div id="lunch-form" style="display:none;">
+    <h1>Lunch</h1>
+    Food name
+    <input type="text" id="lunch-name0" class="lunch-name" name="lunch-name" required>
+    Servings
+    <input type="number" id="lunch-servings0" min="1" max="100" value="1" required>
+    Calories
+    <input type="number" id="lunch-calories0" min="0" class="calories" max="10000" value="0" required>
+    <a style="color: blue" id="lunchdontknow" class="dontknow">Don't know?</a>
+    <button id="lunchaddmore">Add item</button>
+    <button id="lunchremove">Remove item</button>
+    <div>
+        <button id="previous1">Previous</button>
+        <button id="decoysubmit2">Next</button>
+    </div>
+</div>
+
+
+<div id="dinner-form" style="display:none;">
+    <h1>Dinner</h1>
+    Food name
+    <input type="text" id="dinner-name0" class="dinner-name" name="dinner-name" required>
+    Servings
+    <input type="number" id="dinner-servings0" min="1" max="100" value="1" required>
+    Calories
+    <input type="number" id="dinner-calories0" class="calories" min="0" max="10000" value="0" required>
+    <a style="color: blue" id="dinnerdontknow" class="dontknow">Don't know?</a>
+    <button id="dinneraddmore">Add item</button>
+    <button id="dinnerremove">Remove item</button>
+    <div>
+        <button id="previous2">Previous</button>
+        <button id="decoysubmit3">Next</button>
+    </div>
+</div>
+
+<div id="snacks-form" style="display:none;">
+    <h1>Snacks</h1>
+    Food name
+    <input type="text" id="snacks-name0" class="snacks-name" name="snacks-name" required>
+    Servings
+    <input type="number" id="snacks-servings0" min="1" max="100" value="1" required>
+    Calories
+    <input type="number" id="snacks-calories0" class="calories" min="0" max="10000" value="0" required>
+    <a style="color: blue" id="snacksdontknow" class="dontknow">Don't know?</a>
+    <button id="snacksaddmore">Add item</button>
+    <button id="snacksremove">Remove item</button>
+    <div>
+        <button id="previous3">Previous</button>
+        <button id="submit-button">Submit</button>
+    </div>
+</div>
+
+<div style="display: none;">
+    <form action="{% url 'food' %}" method="post" id="hidden-form">
         {% csrf_token %}
-        <div id="breakfast_div">
-            <div>
-                <label for="breakfast">What do you eat for breakfast</label>
-                <input type="text" name="breakfast">
-                <label for="breakfast_servings">Servings</label>
-                <input type="number" name="breakfast_servings" max="10" min="1" value="1">
-                <label for="breakfast_calories">How many calories</label>
-                <input type="number" name="breakfast_calories" max="10000" min="0" value="0">
-            </div>
-                <a style="color: blue" id="breakfastdontknow" class="dontknow">Don't know?</a>
-            <div>
-                <button id="decoy1">Submit</button>
-            </div>
-        </div>
-        <div id="lunch_div">
-            <label for="lunch">What do you eat for lunch</label>
-            <input type="text" name="lunch">
-            <label for="lunch_servings">Servings</label>
-            <input type="number" name="lunch_servings" max="10" min="1" value="1">
-            <label for="lunch_calories">How many calories</label>
-            <input type="number" name="lunch_calories" max="10000" min="0" value="0">
-            <a style="color: blue" id="lunchdontknow" class="dontknow">Don't know?</a>
-            <div>
-                <button id="decoy2">Submit</button>
-            </div>
-        </div>
-        <div id="dinner_div">
-            <label for="dinner">What do you eat for dinner</label>
-            <input type="text" name="dinner">
-            <label for="dinner_servings">Servings</label>
-            <input type="number" name="dinner_servings" max="10" min="1" value="1">
-            <label for="dinner_calories">How many calories</label>
-            <input type="number" name="dinner_calories" max="10000" min="0" value="0">
-            <a style="color: blue" id="dinnerdontknow" class="dontknow">Don't know?</a>
-            <div>
-                <button id="decoy3">Submit</button>
-            </div>
-        </div>
-        <div id="snacks_div">
-            <label for="snacks">Did you eat any snacks?</label>
-            <input type="text" name="snacks">
-            <label for="dinner_servings">Servings</label>
-            <input type="number" name="snacks_servings" max="10" min='1' value="1">
-            <label for="snacks_calories">How many calories</label>
-            <input type="number" name="snacks_calories" max="10000" min="0" value="0">
-            <a style="color: blue" id="snacksdontknow" class="dontknow">Don't know?</a>
-            <div id="submit_button">
-                <input type="submit">
-            </div>
-        </div>
+        <input type="number" id="old-calories" name="old-calories">
     </form>
 </div>
 

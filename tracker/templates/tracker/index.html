@@ -88,9 +88,7 @@
     {% else %}
     <li>
         <div>
-            <form action="{% url 'set_dates' %}">
-                <input type="submit" value="Set Dates to suggest workout">
-            </form>
+            <a href="{% url 'set_dates' %}"><button>Set Dates to suggest workout</button></a>
         </div>
     </li>
     {% endif %}
