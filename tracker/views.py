@@ -15,78 +15,57 @@ from .workouts import get_workout
 import json
 from datetime import datetime, timedelta
 
-# Create your views here.
 def login_page(request):
     if not request.user.is_authenticated:
-        # Check if the HTTP request method is POST (form submission)
         if request.method == "POST":
             username = request.POST.get('username')
             password = request.POST.get('password')
             
-            # Check if a user with the provided username exists
             if not User.objects.filter(username=username).exists():
-                # Display an error message if the username does not exist
                 messages.error(request, 'Invalid Username')
                 return redirect('login')
             
             user = authenticate(username=username, password=password)
             
             if user is None:
-                # Display an error message if authentication fails (invalid password)
                 messages.error(request, "Invalid Password")
                 return redirect('login')
             else:
-                # Log in the user and redirect to the home page upon successful login
                 login(request, user)
                 return redirect('index')
     else:
         return redirect('index')
     
-    # Render the login page template (GET request)
     return render(request, 'tracker/login.html')
 
-# Define a view function for the registration page
 def register_page(request):
-    # Check if the HTTP request method is POST (form submission)
     if request.method == 'POST':
         first_name = request.POST.get('firstname')
         last_name = request.POST.get('lastname')
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
-        # Check if a user with the provided username already exists
         user = User.objects.filter(username=username)
         
         if user.exists():
-            # Display an information message if the username is taken
             messages.info(request, "Username already taken!")
             return redirect('register')
-        
-        # Create a new User object with the provided information
         user = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             username=username
         )
-        
-        # Set the user's password and save the user object
         user.set_password(password)
         user.save()
-        
-        # Display an information message indicating successful account creation
         messages.info(request, "Account created Successfully!")
         return redirect('index')
     
-    # Render the registration page template (GET request)
     return render(request, 'tracker/register.html')
 
 
 def logout_view(request):
-    # Log out the current user
     logout(request)
-    # Redirect to the login page (or another page, e.g., home page)
     messages.info(request, "You have been logged out successfully.")
-    return redirect('login')  # Replace 'login' with your desired URL name
+    return redirect('login')
 
 
 def index(request):
@@ -343,3 +322,24 @@ def log_food(request):
             return render(request, 'tracker/logfood.html')
     else:
         return redirect('login')
+    
+
+def account(request):
+    return_dict = dict()
+    workout = Goal.objects.get(current_user = request.user)
+    days = workout.days
+    goals = []
+    details = Stats.objects.filter(current_user = request.user)
+    weight = details[0].weight
+    weight_goal = details[0].weight_goal
+    for goal in details:
+        goals.append(goal.goal)
+
+    date_started = workout.date_started
+    return_dict["workout"] = workout
+    return_dict["days"] = days
+    return_dict["date_started"] = date_started
+    return_dict["goals"] = goals
+    return_dict["weight"] = weight
+    return_dict["weight_goal"] = weight_goal
+    return render(request, "tracker/account.html", return_dict)

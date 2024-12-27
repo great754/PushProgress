@@ -10,5 +10,6 @@ urlpatterns = [
     path('food/', views.food, name="food"),
     path('setdates/', views.set_dates, name="set_dates"),
     path('activity/', views.log_activity, name="activity"),
-    path('logfood/', views.log_food, name="logfood")
+    path('logfood/', views.log_food, name="logfood"),
+    path('account', views.account, name="account")
 ]
