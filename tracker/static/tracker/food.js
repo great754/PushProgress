@@ -107,53 +107,88 @@ document.addEventListener("DOMContentLoaded", () => {
     function addDiv(meal, divId, mealCount){
         const bigDiv = document.querySelector(divId);
 
-
         const newDiv = document.createElement("div");
-        const inputLabel = document.createElement("label");
         const newInput = document.createElement("input");
-        const servingsLabel = document.createElement("label");
         const newServings = document.createElement("input");
-        const caloriesLabel = document.createElement("label");
         const newCalories = document.createElement("input");
-        const dontKnow = document.createElement("a");
-
-        bigDiv.appendChild(newDiv);             // add the new div to the original div
-        newDiv.appendChild(inputLabel);
-        newDiv.appendChild(newInput);
-        newDiv.appendChild(servingsLabel);
-        newDiv.appendChild(newServings);
-        newDiv.appendChild(caloriesLabel);
-        newDiv.appendChild(newCalories);
-        newDiv.appendChild(dontKnow);
+        const dontKnow = document.createElement("i");
+        const dontKnowDiv = document.createElement("div");
+        const hover = document.createElement("span");
         
+        bigDiv.appendChild(newDiv);             // add the new div to the original div
+        void newDiv.offsetWidth;
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(newServings);
+        newDiv.appendChild(newCalories);
+        newDiv.appendChild(dontKnowDiv);
+        dontKnowDiv.appendChild(dontKnow);
+        dontKnowDiv.appendChild(hover);
+        
+        hover.classList.add("popuptext");
+        hover.textContent = "Approximate Calories, provided by CalorieNinjas";
         newDiv.classList.add(meal + "-div");
+        newDiv.classList.add("fade-in");
         newDiv.id = meal + "-div" + mealCount;
         newInput.classList.add(meal + "-name");
+        newInput.classList.add("text-box");
+        newInput.style.marginRight = "5px";
+        newServings.style.marginRight = "5px";
+        newCalories.style.marginRight = "5px";
+        dontKnowDiv.style.marginRight = "8.5px";
+        newCalories.classList.add("text-box");
+        newServings.classList.add("text-box");
+        newCalories.style.width = "100px";
+        newServings.style.width = "80px";
+        newInput.style.width = "240px";
         newInput.id = meal + "-name" + mealCount;
         newInput.name=meal + "-name";
-        //inputLabel.for = meal + "-name";
-        inputLabel.textContent = "Food name";
-        servingsLabel.textContent = "Servings";
-        caloriesLabel.textContent = "Calories";
         newCalories.id = meal + "-calories" + mealCount;
         newCalories.type = "number";
         newCalories.value = 0;
         newServings.type = "number";
         newServings.value = 1;
         dontKnow.classList.add('dontknow');
-        dontKnow.id = 'dontknow' + mealCount;
-        dontKnow.textContent = "Don't Know?";
+        dontKnowDiv.classList.add("popup");
+        dontKnowDiv.id = 'dontknow' + mealCount;
+        dontKnow.classList.add("fa-question-circle");
+        dontKnow.classList.add("fa");
+        dontKnow.ariaHidden = "true";
         newCalories.classList.add('calories');
+
+        newDiv.addEventListener("animationend", () => {
+            newDiv.classList.remove("fade-in");
+        });
         
         if (meal === 'breakfast'){
             modifyBreakfastCount(breakfastTimes+1);
+            if (breakfastTimes > 1 && breakfastTimes < 4) {
+                document.querySelector('#breakfastremove').style.display = 'inline-block';
+            } else if (breakfastTimes > 3) {
+                document.querySelector('#breakfastaddmore').style.display = 'none';
+            }
         } else if (meal === 'lunch') {
             modifyLunchCount(lunchTimes+1);
+            if (lunchTimes > 1 && lunchTimes < 4) {
+                document.querySelector('#lunchremove').style.display = 'inline-block';
+            } else if (lunchTimes > 3) {
+                document.querySelector('#lunchaddmore').style.display = 'none';
+            }
         } else if (meal == 'dinner') {
             modifyDinnerCount(dinnerTimes+1);
+            if (dinnerTimes > 1 && dinnerTimes < 4) {
+                document.querySelector('#dinnerremove').style.display = 'inline-block';
+            } else if (dinnerTimes > 3) {
+                document.querySelector('#dinneraddmore').style.display = 'none';
+            }
         } else {
             modifySnacksCount(snackTimes+1);
+            if (snackTimes > 1 && snackTimes < 4) {
+                document.querySelector('#snacksremove').style.display = 'inline-block';
+            } else if (snackTimes > 3) {
+                document.querySelector('#snacksaddmore').style.display = 'none';
+            }
         }
+
 
         dontKnow.addEventListener("click", () => {
             getCal(newInput.value, newCalories, newServings.value);
@@ -162,20 +197,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     function removeDiv(divId, meal, mealCount) {
-        let divs = document.querySelectorAll(divId);
+        const divs = document.querySelectorAll(divId);
         if (divs.length > 0) {
-            divs[divs.length - 1].remove();
+            const lastDiv = divs[divs.length - 1];
+            lastDiv.classList.add("fade-out");
+    
+            // Delay removal to allow the animation to play
+            lastDiv.addEventListener("animationend", () => {
+                lastDiv.remove();
 
             if (meal === 'breakfast'){
                 modifyBreakfastCount(breakfastTimes-1);
+                if (breakfastTimes < 4 && breakfastTimes > 2) {
+                    document.querySelector('#breakfastaddmore').style.display = 'inline-block';
+                } else if (breakfastTimes < 2) {
+                    document.querySelector('#breakfastremove').style.display = 'none';
+                }
             } else if (meal === 'lunch') {
                 modifyLunchCount(lunchTimes-1);
+                if (lunchTimes < 4 && lunchTimes > 2) {
+                    document.querySelector('#lunchaddmore').style.display = 'inline-block';
+                } else if (lunchTimes < 2) {
+                    document.querySelector('#lunchremove').style.display = 'none';
+                }
             } else if (meal == 'dinner') {
                 modifyDinnerCount(dinnerTimes-1);
+                if (dinnerTimes < 4 && dinnerTimes > 2) {
+                    document.querySelector('#dinneraddmore').style.display = 'inline-block';
+                } else if (dinnerTimes < 2) {
+                    document.querySelector('#dinnerremove').style.display = 'none';
+                }
             } else {
                 modifySnacksCount(snackTimes-1);
+                if (snackTimes < 4 && snackTimes > 2) {
+                    document.querySelector('#snacksaddmore').style.display = 'inline-block';
+                } else if (snackTimes < 2) {
+                    document.querySelector('#snacksremove').style.display = 'none';
+                }
             }
-        }
+        });
+    }
     }
 
 
@@ -184,7 +245,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const breakfast_add = document.querySelector('#breakfastaddmore');      // button
     breakfast_add.addEventListener("click", () => {
         if (breakfastTimes < 4) {
-            addDiv("breakfast", "#breakfast-form", breakfastTimes);
+            addDiv("breakfast", "#breakfast", breakfastTimes);
+            div = document.querySelector('#breakfast-form');
+            div.style.height = (parseInt(getComputedStyle(div).height) + 90) + "px";
         }
     });
 
@@ -192,6 +255,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const breakfast_remove = document.querySelector('#breakfastremove');
     breakfast_remove.addEventListener("click", () => {
         removeDiv('.breakfast-div', "breakfast", breakfastTimes);
+            div = document.querySelector('#breakfast-form');
+            console.log(breakfastTimes);
+            if (breakfastTimes >= 1) {
+                div.style.height = (parseInt(getComputedStyle(div).height) - 90) + "px"};
     });
 
 
@@ -204,7 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const lunch_add = document.querySelector('#lunchaddmore');      // button
     lunch_add.addEventListener("click", () => {
         if (lunchTimes < 4) {
-            addDiv("lunch", "#lunch-form", lunchTimes);
+            addDiv("lunch", "#lunch", lunchTimes);
+            div = document.querySelector('#lunch-form');
+            div.style.height = (parseInt(getComputedStyle(div).height) + 90) + "px";
         }
     });
 
@@ -212,6 +281,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const lunch_remove = document.querySelector('#lunchremove');
     lunch_remove.addEventListener("click", () => {
         removeDiv('.lunch-div', "lunch", lunchTimes);
+        div = document.querySelector('#lunch-form');
+        if (lunchTimes >= 1) {
+            div.style.height = (parseInt(getComputedStyle(div).height) - 90) + "px"};
     });
 
 
@@ -225,7 +297,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const dinner_add = document.querySelector('#dinneraddmore');      // button
     dinner_add.addEventListener("click", () => {
         if (dinnerTimes < 4) {
-            addDiv("dinner", "#dinner-form", dinnerTimes);
+            addDiv("dinner", "#dinner", dinnerTimes);
+            div = document.querySelector('#dinner-form');
+            div.style.height = (parseInt(getComputedStyle(div).height) + 90) + "px";
         }
     });
 
@@ -233,6 +307,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const dinner_remove = document.querySelector('#dinnerremove');
     dinner_remove.addEventListener("click", () => {
         removeDiv('.dinner-div', "dinner", dinnerTimes);
+        div = document.querySelector('#dinner-form');
+        if (dinnerTimes >= 1) {
+            div.style.height = (parseInt(getComputedStyle(div).height) - 90) + "px"};
     });
 
 
@@ -244,7 +321,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const snacks_add = document.querySelector('#snacksaddmore');      // button
     snacks_add.addEventListener("click", () => {
         if (snackTimes < 4) {
-            addDiv("snacks", "#snacks-form", snackTimes);
+            addDiv("snacks", "#snacks", snackTimes);
+            div = document.querySelector('#snacks-form');
+            div.style.height = (parseInt(getComputedStyle(div).height) + 90) + "px";
         }
     });
 
@@ -252,6 +331,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const snacks_remove = document.querySelector('#snacksremove');
     snacks_remove.addEventListener("click", () => {
         removeDiv('.snacks-div', "snacks", snackTimes);
+        div = document.querySelector('#snacks-form');
+        if (snackTimes >= 1) {
+            div.style.height = (parseInt(getComputedStyle(div).height) - 90) + "px"};
     });
 
 

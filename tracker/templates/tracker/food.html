@@ -5,76 +5,180 @@
 integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" 
 crossorigin="anonymous">
 </script>
+<style>
+    .popup {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    .popup .popuptext {
+      visibility: hidden;
+      width: 160px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -80px;
+    }
+    
+    .popup .popuptext::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
 
-<h3>What would you eat in a typical day</h3>
+    .popup .show {
+      visibility: visible;
+      -webkit-animation: fadeIn 1s;
+      animation: fadeIn 1s;
+    }
 
-<div id="breakfast-form">
-    <h1>Breakfast</h1>
-    Food name
-    <input type="text" id="breakfast-name0" class="breakfast-name" name="breakfast-name" required>
-    Servings
-    <input type="number" id="breakfast-servings0" min="1" max="100" value="1" required>
-    Calories
-    <input type="number" id="breakfast-calories0" class="calories" min="0" max="10000" value="0" required>
-    <a style="color: blue" id="breakfastdontknow" class="dontknow">Don't know?</a>
-    <button id="breakfastaddmore">Add item</button>
-    <button id="breakfastremove">Remove item</button>
+    .fa-question-circle {
+        color: #8693AB;
+    }
+    
+    @-webkit-keyframes fadeIn {
+      from {opacity: 0;} 
+      to {opacity: 1;}
+    }
+    
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity:1 ;}
+    }
+
+    .popup:hover .popuptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .fas {
+        font-size: 25px;
+    }
+
+    
+</style>
+
+<div id="breakfast-form" class="form-box" style="width: 558px; height: 270px;">
+    <div id="breakfast">
+        <h4 class="form-title" style="margin-bottom: px;">
+            <strong>What would you usually eat for breakfast?</strong>
+        </h4>
+        <div class="form-label" style="margin-left: -10px;">
+            Food name &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Servings &nbsp; &nbsp; Calories
+        </div>
+        <div style="margin-right: 7px;">
+            <input type="text" id="breakfast-name0" class="text-box breakfast-name" name="breakfast-name" style="width:240px;" required>
+            <input type="number" id="breakfast-servings0" max="100" min="0" value="1" class="text-box" style="width: 80px; margin-left:0px;" required>
+            <input type="number" id="breakfast-calories0" max="10000" value="0" class="calories text-box" style="width:100px;" required>
+            <div class="popup" id="breakfastdontknow">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                <span class="popuptext" id="myPopup">Approximate Calories, provided by CalorieNinjas</span>
+                <!-- <a style="color: blue" class="dontknow">Don't know?</a> -->
+            </div>
+        </div>
+    </div>
+    <i class="fas fa-plus-circle" id="breakfastaddmore" aria-hidden="true" style="color: #afafaf; cursor: pointer;"></i>
+    <i class="fas fa-minus-circle" id="breakfastremove" aria-hidden="true" style="color: #afafaf; display: none; cursor: pointer;"></i>
     <div>
-        <button id="decoysubmit1">Next</button>
+        <button id="decoysubmit1" class="form-button">Next</button>
+    </div>
+</div>
+
+<div id="lunch-form" class="form-box" style="width: 558px; height: 270px; display: none;">
+    <div id="lunch">
+        <h4 class="form-title" style="margin-bottom: px;">
+            <strong>What would you usually eat for lunch?</strong>
+        </h4>
+        <div class="form-label" style="margin-left: -10px;">
+            Food name &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Servings &nbsp; &nbsp; Calories
+        </div>
+        <div style="margin-right: 7px;">
+            <input type="text" id="lunch-name0" class="text-box lunch-name" name="lunch-name" style="width:240px;" required>
+            <input type="number" id="lunch-servings0" max="100" min="0" value="1" class="text-box" style="width: 80px; margin-left:0px;" required>
+            <input type="number" id="lunch-calories0" max="10000" value="0" class="calories text-box" style="width:100px;" required>
+            <div class="popup" id="lunchdontknow">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                <span class="popuptext" id="myPopup">Approximate Calories, provided by CalorieNinjas</span>
+                <!-- <a style="color: blue" class="dontknow">Don't know?</a> -->
+            </div>
+        </div>
+    </div>
+    <i class="fas fa-plus-circle" id="lunchaddmore" aria-hidden="true" style="color: #afafaf; cursor: pointer;"></i>
+    <i class="fas fa-minus-circle" id="lunchremove" aria-hidden="true" style="color: #afafaf; display: none; cursor: pointer;"></i>
+    <div>
+        <button id="previous1" class="form-button">Previous</button>
+        <button id="decoysubmit2" class="form-button">Next</button>
+    </div>
+</div>
+
+<div id="dinner-form" class="form-box" style="width: 558px; height: 270px; display: none;">
+    <div id="dinner">
+        <h4 class="form-title" style="margin-bottom: px;">
+            <strong>What would you usually eat for dinner?</strong>
+        </h4>
+        <div class="form-label" style="margin-left: -10px;">
+            Food name &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Servings &nbsp; &nbsp; Calories
+        </div>
+        <div style="margin-right: 7px;">
+            <input type="text" id="dinner-name0" class="text-box dinner-name" name="dinner-name" style="width:240px;" required>
+            <input type="number" id="dinner-servings0" max="100" min="0" value="1" class="text-box" style="width: 80px; margin-left:0px;" required>
+            <input type="number" id="dinner-calories0" max="10000" value="0" class="calories text-box" style="width:100px;" required>
+            <div class="popup" id="dinnerdontknow">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                <span class="popuptext" id="myPopup">Approximate Calories, provided by CalorieNinjas</span>
+                <!-- <a style="color: blue" class="dontknow">Don't know?</a> -->
+            </div>
+        </div>
+    </div>
+    <i class="fas fa-plus-circle" id="dinneraddmore" aria-hidden="true" style="color: #afafaf; cursor: pointer;"></i>
+    <i class="fas fa-minus-circle" id="dinnerremove" aria-hidden="true" style="color: #afafaf; display: none; cursor: pointer;"></i>
+    <div>
+        <button id="previous2" class="form-button">Previous</button>
+        <button id="decoysubmit3" class="form-button">Next</button>
     </div>
 </div>
 
 
-
-<div id="lunch-form" style="display:none;">
-    <h1>Lunch</h1>
-    Food name
-    <input type="text" id="lunch-name0" class="lunch-name" name="lunch-name" required>
-    Servings
-    <input type="number" id="lunch-servings0" min="1" max="100" value="1" required>
-    Calories
-    <input type="number" id="lunch-calories0" min="0" class="calories" max="10000" value="0" required>
-    <a style="color: blue" id="lunchdontknow" class="dontknow">Don't know?</a>
-    <button id="lunchaddmore">Add item</button>
-    <button id="lunchremove">Remove item</button>
-    <div>
-        <button id="previous1">Previous</button>
-        <button id="decoysubmit2">Next</button>
+<div id="snacks-form" class="form-box" style="width: 558px; height: 270px; display: none;">
+    <div id="snacks">
+        <h4 class="form-title" style="margin-bottom: px;">
+            <strong>What would you usually eat for snacks?</strong>
+        </h4>
+        <div class="form-label" style="margin-left: -10px;">
+            Food name &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Servings &nbsp; &nbsp; Calories
+        </div>
+        <div style="margin-right: 7px;">
+            <input type="text" id="snacks-name0" class="text-box snacks-name" name="snacks-name" style="width:240px;" required>
+            <input type="number" id="snacks-servings0" max="100" min="0" value="1" class="text-box" style="width: 80px; margin-left:0px;" required>
+            <input type="number" id="snacks-calories0" max="10000" value="0" class="calories text-box" style="width:100px;" required>
+            <div class="popup" id="snacksdontknow">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                <span class="popuptext" id="myPopup">Approximate Calories, provided by CalorieNinjas</span>
+                <!-- <a style="color: blue" class="dontknow">Don't know?</a> -->
+            </div>
+        </div>
     </div>
-</div>
-
-
-<div id="dinner-form" style="display:none;">
-    <h1>Dinner</h1>
-    Food name
-    <input type="text" id="dinner-name0" class="dinner-name" name="dinner-name" required>
-    Servings
-    <input type="number" id="dinner-servings0" min="1" max="100" value="1" required>
-    Calories
-    <input type="number" id="dinner-calories0" class="calories" min="0" max="10000" value="0" required>
-    <a style="color: blue" id="dinnerdontknow" class="dontknow">Don't know?</a>
-    <button id="dinneraddmore">Add item</button>
-    <button id="dinnerremove">Remove item</button>
+    <i class="fas fa-plus-circle" id="snacksaddmore" aria-hidden="true" style="color: #afafaf; cursor: pointer;"></i>
+    <i class="fas fa-minus-circle" id="snacksremove" aria-hidden="true" style="color: #afafaf; display: none; cursor: pointer;"></i>
     <div>
-        <button id="previous2">Previous</button>
-        <button id="decoysubmit3">Next</button>
-    </div>
-</div>
-
-<div id="snacks-form" style="display:none;">
-    <h1>Snacks</h1>
-    Food name
-    <input type="text" id="snacks-name0" class="snacks-name" name="snacks-name" required>
-    Servings
-    <input type="number" id="snacks-servings0" min="1" max="100" value="1" required>
-    Calories
-    <input type="number" id="snacks-calories0" class="calories" min="0" max="10000" value="0" required>
-    <a style="color: blue" id="snacksdontknow" class="dontknow">Don't know?</a>
-    <button id="snacksaddmore">Add item</button>
-    <button id="snacksremove">Remove item</button>
-    <div>
-        <button id="previous3">Previous</button>
-        <button id="submit-button">Submit</button>
+        <button id="previous3" class="form-button">Previous</button>
+        <button id="submit-button" class="form-button">Next</button>
     </div>
 </div>
 

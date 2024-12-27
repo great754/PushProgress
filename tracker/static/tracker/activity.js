@@ -5,8 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     activity.addEventListener('change', () => {
         if (activity.value === 'other') {
             box.style.display = 'block';
+            div = document.querySelector('.form-box');
+            div.style.height = (parseInt(getComputedStyle(div).height) + 80) + "px";
         } else {
             box.style.display = 'none';
+            div = document.querySelector('.form-box');
+            div.style.height = (parseInt(getComputedStyle(div).height) - 80) + "px";
         }
     });
 
