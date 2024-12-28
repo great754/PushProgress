@@ -11,5 +11,7 @@ urlpatterns = [
     path('setdates/', views.set_dates, name="set_dates"),
     path('activity/', views.log_activity, name="activity"),
     path('logfood/', views.log_food, name="logfood"),
-    path('account', views.account, name="account")
+    path('account', views.account, name="account"),
+    path('update_stats/', views.update_stats, name="update_stats"),
+    path('update_days/', views.update_days, name="update_days")
 ]

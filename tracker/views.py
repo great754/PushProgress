@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -71,7 +72,7 @@ def logout_view(request):
 def index(request):
     ## MAYBE ADD ANOTHER html template that the visiting user not logged in will see
     if request.user.is_authenticated:
-        if len(Food.objects.filter(current_user = request.user)) > 0:
+        if len(Stats.objects.filter(current_user = request.user)) > 0:           # if the user has stats
             calories_burned = 0
             for activity in Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now()):
                 calories_burned += activity.calories_burned
@@ -97,7 +98,7 @@ def index(request):
             past_7_days.reverse()
             if len(details)>0:          # if the user already has stats
                 for detail in details:
-                    goals.append(detail.goal)
+                    goals.append(detail.goals)
                 weight = details[0].weight
                 weight_goal = details[0].weight_goal
                 try:
@@ -151,32 +152,13 @@ def index(request):
                                 return_dict["done"] = "Done"
                             return render(request, 'tracker/index.html', return_dict)
                     except IndexError:
-                        workout = Goal.objects.get(current_user = request.user)
-                        paired = pair_days(workout.days, workout.workout)
-                        return_dict = {
-                            #######################################################
-                                "goals": goals,
-                                "weight": weight,
-                                "food_eaten": Food_Log.objects.filter(current_user = request.user, date_eaten=datetime.now()), 
-                                "total_calories": total_calories,
-                                "total_protein": total_protein,
-                                "date": datetime.now(),
-                                "day": day,
-                                "weight_goal": weight_goal,
-                                "calories_burned": calories_burned,
-                                "past_days": past_7_days,
-                                "workout": paired
-                            }
-                        done = Activity_Log.objects.filter(current_user = request.user, date_started = datetime.now(), activity="Workout")
-                        if len(done) > 0:
-                            return_dict["done"] = "Done"
-                        return render(request, 'tracker/index.html', return_dict)
+                        return redirect('food')
                 except Food.DoesNotExist:
                     return redirect('food')
             else:
                 return redirect('set')
         else:
-            return redirect('food')
+            return redirect('set')
     else:
         return redirect('login')
 
@@ -193,8 +175,8 @@ def set_goal(request):
                 height = (int(heightft)*12) + int(heightin)
                 goals = request.POST.getlist("goal")
                 weight_goal = request.POST["weight_goal"]
-                for goal in goals:
-                    Stats(current_user = request.user, goal = goal, weight = weight, weight_goal = weight_goal, height = height).save()
+                weights = [(weight, str(datetime.now()))]
+                Stats(current_user = request.user, goals = goals, weight = weight, weights = weights, weight_goal = weight_goal, height = height).save()
                 return redirect("food")
             else:
                 stats_choices = Stats.GOAL_CHOICES
@@ -219,15 +201,12 @@ def get_calories(food):
 def food(request):
     # https://www.gicare.com/diets/increasing-calories/
     if request.method == 'POST':
-        details = Stats.objects.filter(current_user = request.user)
-        weight = details[0].weight
-        goals = []
+        details = Stats.objects.get(current_user = request.user)
+        weight = details.weight
+        goals = details.goals
         new_calories = 0
         old_calories = int(request.POST["old-calories"])
 
-        if len(details)>0:          # if the user already has stats
-            for detail in details:
-                goals.append(detail.goal)
         if 'Lose Weight' in goals:
             new_calories = old_calories - 500
         elif 'Gain Weight' in goals:
@@ -325,21 +304,74 @@ def log_food(request):
     
 
 def account(request):
-    return_dict = dict()
-    workout = Goal.objects.get(current_user = request.user)
-    days = workout.days
-    goals = []
-    details = Stats.objects.filter(current_user = request.user)
-    weight = details[0].weight
-    weight_goal = details[0].weight_goal
-    for goal in details:
-        goals.append(goal.goal)
+    if request.user.is_authenticated:
+        try:
+            Goal.objects.get(current_user = request.user)
+            return_dict = dict()
+            workout = Goal.objects.get(current_user = request.user)
+            days = workout.days
+            details = Stats.objects.get(current_user = request.user)
+            weight = details.weight
+            weight_goal = details.weight_goal
+            goals = details.goals
+            weights = details.weights
+            height = details.height
+            full_goals = []               ## full list of all goals
+            for goal in Stats.GOAL_CHOICES:
+                full_goals.append(goal[1])
+            date_started = workout.date_started
+            return_dict["workout"] = workout
+            return_dict["days"] = days
+            return_dict["date_started"] = date_started
+            return_dict["goals"] = goals
+            return_dict["weight"] = weight
+            return_dict["weights"] = weights
+            return_dict["weight_goal"] = weight_goal
+            return_dict["full_goals"] = full_goals
+            return_dict["height"] = height
+            return render(request, "tracker/account.html", return_dict)
+        except ObjectDoesNotExist:
+            return redirect('index')
+    else:
+        return redirect('login')
+    
 
-    date_started = workout.date_started
-    return_dict["workout"] = workout
-    return_dict["days"] = days
-    return_dict["date_started"] = date_started
-    return_dict["goals"] = goals
-    return_dict["weight"] = weight
-    return_dict["weight_goal"] = weight_goal
-    return render(request, "tracker/account.html", return_dict)
+
+def update_stats(request):
+    if request.method == 'POST':
+        try:
+            old = Stats.objects.get(current_user = request.user)
+            weights = old.weights
+            data = json.loads(request.body)
+            new_weight = data.get('weight')
+            weight_goal = data.get('weight_goal')
+            height = data.get('new_height')
+            goals = data.get('goals')
+            weights.append((new_weight, str(datetime.now())))
+            old.goals = goals
+            old.weight = new_weight
+            old.weights = weights
+            old.height = height
+            old.weight_goal = weight_goal
+            old.save()
+            return JsonResponse({'message': 'Received'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+def update_days(request):
+    if request.method == 'POST':
+        try:
+            old = Goal.objects.get(current_user = request.user)
+            data = json.loads(request.body)
+            days = data.get('days')
+            workout = get_workout(len(days))
+            old.days = days
+            old.workout = workout
+            old.save()
+            return JsonResponse({'message': 'received'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+

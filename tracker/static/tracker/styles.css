@@ -53,6 +53,14 @@ td {
     background-color: #181D4B;
     width: 252px;
     text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.stat:hover {
+    transform: scale(1.05);
+    -webkit-transform: scale(1.05);
+    -moz-transform: scale(1.05);
 }
 
 body {
@@ -66,7 +74,7 @@ body {
 }
 
 .info {
-    margin-top: 30px;
+    margin-top: 10px;
     font-size: 30px;
     font-weight: bold;
 }
@@ -155,6 +163,8 @@ body {
     from {
         opacity: 0;
         transform: translateY(-10px);
+        -webkit-transform: translateY(-10px);
+        -moz-transform: translateY(-10px);
     }
     to {
         opacity: 1;
@@ -179,4 +189,75 @@ body {
 
 .fade-out {
     animation: fadeOut 0.2s ease-out;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.close-button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.progress-bar {
+    border-radius: 10px;
+    width: 160px;
+    background-color: rgb(255, 255, 255);
+    height: 33px;
+    margin: auto;
+    margin-top: 9px;
+    position: relative;
+}
+
+.progress {
+    background:rgb(0, 130, 245);
+    width: 0%;
+    height: 33px;
+    text-align: center;
+    border-radius: 0px;
+    transition: width 1.25s ease-in-out;
+}
+
+.progress-bar p {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    margin: 0;
+    color: black;
+    font-weight: bold;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.checkboxes {
+    background-color: blue;
+    transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    -moz-transform: scale(1.5);
 }

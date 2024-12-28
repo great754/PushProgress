@@ -15,14 +15,15 @@ class Stats(models.Model):
         ("add", "Gain Muscle"),
     )
     current_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="current_user")
-    goal = models.CharField(choices=GOAL_CHOICES, default="lose", max_length=20)
+    goals = models.JSONField(default=list())
     weight = models.IntegerField(default=0)         # in lbs
+    weights = models.JSONField(default=list())
     weight_goal = models.IntegerField(default=0)    # in lbs
     height = models.IntegerField(default=0)         # in inches
     date_started = models.DateField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.current_user} wants to {self.goal}"
+        return f"{self.current_user} wants to {self.goals}"
     
 class Food(models.Model):
     current_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="food_user")

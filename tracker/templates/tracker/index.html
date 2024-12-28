@@ -5,7 +5,7 @@
 <div id="welcome">
     <h3>Welcome Back, <strong>{{user.username}}</strong></h3>
 </div>
-<div id="index_date" style="background-color:#BDD4E7; width: 370px; text-align:center; margin: 0 auto; border-radius: 8px;">
+<div id="index_date" style="background-color:#BDD4E7; width: 380px; text-align:center; margin: 0 auto; border-radius: 8px;">
     {{day}}, {{date}}
 </div>
 <style>
@@ -14,9 +14,8 @@
     }
 </style>
 
-
 <ul id="stats">
-    <div class="stat">
+    <div class="stat hasProgress">
         <li>
             <div class="title">
                 Current Weight
@@ -24,9 +23,14 @@
             <div class="info">
                 {{weight}}/{{weight_goal}} lbs
             </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+                <p class="perc" style="margin: auto; color: black;">0%</p>
+            </div>
         </li>
+        <p style="display: none" class="box-url">{% url 'account' %}</p>
     </div>
-    <div class="stat">
+    <div class="stat hasProgress">
         <li>
             <div class="title">
                 Calories eaten today
@@ -34,9 +38,14 @@
             <div class="info">
                 {{total_calories}}/{{calorie_goal}} kcal
             </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+                <p class="perc" style="margin: auto; color: black;">0%</p>
+            </div>
         </li>
+        <p style="display: none" class="box-url">{% url 'account' %}</p>
     </div>
-    <div class="stat">
+    <div class="stat hasProgress">
         <li>
             <div class="title">
                 Total protein today
@@ -44,7 +53,12 @@
             <div class="info">
                 {{total_protein}}/{{protein_goal}} g
             </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+                <p class="perc" style="margin: auto; color: black;">0%</p>
+            </div>
         </li>
+        <p style="display: none" class="box-url">{% url 'account' %}</p>
     </div>
     <div class="stat">
         <li>
@@ -55,6 +69,7 @@
                 {{calories_burned}} kcal
             </div>
         </li>
+        <p style="display: none" class="box-url">{% url 'account' %}</p>
     </div>
 </ul>
 

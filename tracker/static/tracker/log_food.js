@@ -37,13 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let calories = 0;
                 let protein = 0;
                 items = result.items;
-                if (items.length > 1) {
-                    for (let i = 0; i < items.length; i++){
-                        calories += items[i].calories * servings;
-                        protein += items[i].protein_g * servings;
-                    }
-                } else if (items.length === 1) {
-                    console.log(items[0]);
+                if (items.length >= 1) {
                     calories = items[0].calories * servings;
                     protein = items[0].protein_g * servings;
                 }

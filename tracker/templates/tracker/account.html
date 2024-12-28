@@ -1,18 +1,60 @@
 {% extends "tracker/layout.html" %}
-
 {% block body %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+{% load static %}
 <h3>Welcome {{user}} </h3>
-<div>First Name: {{user.first_name}}</div>
-<div>Last Name: {{user.last_name}}</div>
-Your stats
-Workout: {{workout}}
-<div>
-You can work out on {{days}}
+<div style="border-style: dotted">
+  <h3><strong>Personal details</strong></h3>
+  <div>First Name: {{user.first_name}}</div>
+  <div>Last Name: {{user.last_name}}</div>
 </div>
-{{date_started}}
-{{weight}}
-{{goals}}
-{{weight_goal}}
+
+<div style="border-style:dotted">
+  <h3><strong>Your stats</strong></h3>
+  Workout: {{workout}}
+  <div>
+    You can work out on {{days}} <button id="update-stats">Update Days</button>
+  </div>
+  <div>
+    {{date_started}}
+  </div>
+  <div>
+    Current Weight: {{weight}}
+  </div>
+  <div>
+    Weight Goal: {{weight_goal}}
+  </div>
+  <div>
+    Goals: {{goals}}
+  </div>
+  <div>
+    {{weights}}
+  </div>
+  Height: <div id="height">
+    {{height}}
+  </div>
+  <div class="popup-overlay" id="popupOverlay">
+    <div id="edit-stats" class="popup-content">
+      <button class="close-button" id="closePopup">&times;</button>
+      <div>
+        Goals: {% for goal in full_goals %}
+        <div>
+          <input type="checkbox" name="goal" value="{{goal}}" {% if goal in goals %} checked {% endif %}>{{goal}}
+        </div>
+        {% endfor %}
+        
+      </div>
+      Weight: <input id="new_weight" value="{{weight}}" style="width: 100px;">
+      Weight Goal: <input type="text" value="{{weight_goal}}" id="new_weight_goal" max="600" style="width: 100px;">
+      Height: <input type="number" id="new_height_ft" min="2" max="8" style="width: 50px;">ft 
+      <input type="number" id="new_height_in" min="0" max="12" style="width: 50px;"> in //// update their values with JS
+      <button class="cancel-edit" id="cancelPopup">Cancel</button>
+      <button class="save-edit", id="save-stats">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'tracker/account.js' %}"></script>
 
 {% endblock %}
 
@@ -26,70 +68,70 @@ You can work out on {{days}}
   <title>Progress Bar</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f7fa;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fa;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
     }
-
+    
     h1 {
-      font-size: 24px;
-      color: #5c2d91; /* Purple color for the title */
-      text-align: center;
-      margin-bottom: 20px;
+    font-size: 24px;
+    color: #5c2d91; /* Purple color for the title */
+    text-align: center;
+    margin-bottom: 20px;
     }
-
+    
     #myProgress {
-      width: 80%;
-      max-width: 500px;
-      background-color: #e0e0e0;
-      border-radius: 25px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      margin: 0 auto;
+    width: 80%;
+    max-width: 500px;
+    background-color: #e0e0e0;
+    border-radius: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 0 auto;
     }
-
+    
     #myBar {
-      width: 10%;
-      height: 30px;
-      background: linear-gradient(45deg, #9c27b0, #ba68c8); /* Purple gradient */
-      text-align: center;
-      line-height: 30px;
-      color: white;
-      font-weight: bold;
-      border-radius: 25px;
-      box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
-      transition: width 0.25s ease-in-out;
+    width: 10%;
+    height: 30px;
+    background: linear-gradient(45deg, #9c27b0, #ba68c8); /* Purple gradient */
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    font-weight: bold;
+    border-radius: 25px;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+    transition: width 0.25s ease-in-out;
     }
-
+    
     button {
-      background-color: #9c27b0; /* Purple button */
-      color: white;
-      font-size: 16px;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 5px;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease;
-      margin-top: 20px;
+    background-color: #9c27b0; /* Purple button */
+    color: white;
+    font-size: 16px;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
     }
-
+    
     button:hover {
-      background-color: #8e24aa; /* Slightly darker purple on hover */
+    background-color: #8e24aa; /* Slightly darker purple on hover */
     }
-
+    
     button:focus {
-      outline: none;
+    outline: none;
     }
   </style>
 </head>
 <body>
-
+  
   <div>
     <h1>Company Progress Tracker</h1>
     <div id="myProgress">
@@ -97,64 +139,67 @@ You can work out on {{days}}
     </div>
     <button onclick="move()">Start Progress</button>
   </div>
-
+  
   <script>
     var i = 0;
     function move() {
-      if (i == 0) {
-        i = 1;
-        var elem = document.getElementById("myBar");
-        var width = 10;
-        var id = setInterval(frame, 10);
-        function frame() {
-          if (width >= 100) {
-            clearInterval(id);
-            i = 0;
-          } else {
-            width++;
-            elem.style.width = width + "%";
-            elem.innerHTML = width + "%";
-          }
-        }
-      }
+    if (i == 0) {
+    i = 1;
+    var elem = document.getElementById("myBar");
+    var width = 10;
+    var id = setInterval(frame, 10);
+    function frame() {
+    if (width >= 100) {
+    clearInterval(id);
+    i = 0;
+    } else {
+    width++;
+    elem.style.width = width + "%";
+    elem.innerHTML = width + "%";
+    }
+    }
+    }
     }
   </script>
-
+  
 </body>
 
 
 ---------------------------------------------------------------------------------------------------------------------------------------
+|--)  |--)    
+|   ) |   )
+|--)  |--)        OGRESS
+|     |  \
+|     |   \
 
-
-
-  <div class="container mt-4">
-    <div class="card p-4 shadow-lg">
-      <h3 class="text-center text-primary">Welcome, {{ user.first_name }}!</h3>
-      
-      <div class="user-info mt-3">
-        <div class="row mb-2">
-          <div class="col-4 font-weight-bold">First Name:</div>
-          <div class="col-8">{{ user.first_name }}</div>
-        </div>
-        <div class="row mb-2">
-          <div class="col-4 font-weight-bold">Last Name:</div>
-          <div class="col-8">{{ user.last_name }}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-4 font-weight-bold">Your Goals:</div>
-          <div class="col-8">{{ goals }}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-4 font-weight-bold">Available Workout Days:</div>
-          <div class="col-8">{{ days }}</div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-4 font-weight-bold">Date Started:</div>
-          <div class="col-8">{{ date_started }}</div>
-        </div>
+<div class="container mt-4">
+  <div class="card p-4 shadow-lg">
+    <h3 class="text-center text-primary">Welcome, {{ user.first_name }}!</h3>
+    
+    <div class="user-info mt-3">
+      <div class="row mb-2">
+        <div class="col-4 font-weight-bold">First Name:</div>
+        <div class="col-8">{{ user.first_name }}</div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-4 font-weight-bold">Last Name:</div>
+        <div class="col-8">{{ user.last_name }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4 font-weight-bold">Your Goals:</div>
+        <div class="col-8">{{ goals }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4 font-weight-bold">Available Workout Days:</div>
+        <div class="col-8">{{ days }}</div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4 font-weight-bold">Date Started:</div>
+        <div class="col-8">{{ date_started }}</div>
       </div>
     </div>
   </div>
+</div>
 
 
 

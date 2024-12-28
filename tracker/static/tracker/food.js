@@ -66,14 +66,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 let items = result.items;
                 let calories = 0;
                 let protein = 0;
-                if (items.length > 1) {
-                    for (let i = 0; i < items.length; i++) {
-                        calories += items[i].calories * servings;
-                        protein += items[i].protein_g * servings;
-                    }
-                } else if (items.length === 1) {
-                    calories = items[0].calories * servings;
-                    protein = items[0].protein_g * servings;
+                if (items.length >= 1) {
+                    calories += items[0].calories * servings;
+                    protein += items[0].protein_g * servings;
                 } else {
                     calories = 0;
                 }

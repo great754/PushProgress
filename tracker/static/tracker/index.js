@@ -6,6 +6,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const cals = [];
     const eaten = [];
 
+    const bigDivs = document.querySelectorAll('.hasProgress');
+    bigDivs.forEach((div) => {
+        info = div.querySelector('.info');
+        bar = div.querySelector('.progress');
+        prog = div.querySelector('.progress-bar');
+        const num = Number(info.textContent.split('/')[0]);
+        const den = Number(info.textContent.split('/')[1].split(' ')[0]);
+        const frac = (num/den) * 100;
+        if (frac >= 100) {
+            bar.style.width = `${frac}%`
+            bar.style.background = "green";
+        } else {
+            bar.style.width = `${frac}%`
+        }
+        prog.querySelector('.perc').textContent = `${Math.round(frac)}%`;
+    })
+
+    stats = document.querySelectorAll('.stat');
+    stats.forEach((stat) => {
+        stat.addEventListener("click", () => {
+            window.location.href = stat.querySelector('.box-url').textContent;
+        })
+    })
+       
+
+
     for (let i = 0; i < p_days.length; i++){
         days.push(p_days[i].textContent);
     }

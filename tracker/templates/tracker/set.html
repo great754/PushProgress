@@ -1,32 +1,51 @@
 {% extends "tracker/layout.html" %}
 
 {% block body %}
-<form action="{% url 'set' %}" method="post">
-    {% csrf_token %}
-    <div>
-        <label for="weight">What is your current Weight</label>
-        <input type="number" name="weight" min="50" max="1000">
-    </div>
-    <div>
-        <label for="height_ft">How tall are you?</label>
-        <input type="number" name="height_ft" min="2" max="7" placeholder="ft">
-        <input type="number" name="height_in" min="0" max="11" placeholder="in">
-    </div>
-    <div>
-        <label for="goal">What are you trying to achieve? </label></br>
-        {% for choice in choices %}
-        <label>
-            <div>
-            <input type="checkbox" name="goal" value="{{choice}}">{{choice}}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        let lose = document.getElementById('Lose Weight');
+        let gain = document.getElementById('Gain Weight');
+        lose.addEventListener("change", () => {
+            if (lose.checked) {
+                gain.checked = false;
+            }
+        })
+        gain.addEventListener("change", () => {
+            if (gain.checked) {
+                lose.checked = false;
+            }
+        })
+    })
+</script>
+<div class="form-box" style="width: 508px; height: 500px;">
+    <form action="{% url 'set' %}" method="post">
+        {% csrf_token %}
+        <h2 class="form-title"><strong>Setup</strong></h2>
+        <div class="form-label" style="margin-right: -120px;">
+            <strong style="font-size: 18px;">Weight &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+             Height </strong>
         </div>
-        </label> </br>
-        {% endfor %}
-    </div>
-    <div>
-        <label for="weight_goal">What is your weight goal</label>
-        <input type="number" name="weight_goal" min="50" max="1000">
-    </div>
-    
-    <input type="submit">
-</form>
+        <input type="number" name="weight" id="weight" class="text-box" style="width: 80px;" min="50" max="1000" required> <strong>lbs</strong>
+        <input type="number" name="height_ft" min="2" max="7" class="text-box" style="width: 60px; margin-left: 100px;"> <strong>ft</strong>
+        <input type="number" name="height_in" min="0" max="11" class="text-box" style="width: 60px;"> <strong>in</strong>
+        <div class="form-label">
+            <strong>Goals</strong>
+        </div>
+        <div style="margin-top: 20px">
+            {% for choice in choices %}
+            <div style="text-align: left; font-size: 15px;">
+                <input style="margin-left: 73px;" id="{{choice}}" class="checkboxes" type="checkbox" name="goal" value="{{choice}}"> &nbsp; {{choice}}
+            </div>
+            {% endfor %}
+        </div>
+        <div>
+            <strong>Weight Goal</strong>
+            <input class="text-box" type="number" name="weight_goal" min="50" max="1000" style="width: 100px;">
+        </div>
+        
+        <input type="submit">
+        
+    </form>
+</div>
 {% endblock %}
