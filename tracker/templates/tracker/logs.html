@@ -1,0 +1,165 @@
+{% extends 'tracker/layout.html' %}
+{% load static %}
+{% block body %}
+<div id="hiddencsrf" style="display: none">{{csrf_token}}</div>
+
+<div>
+    <div class="date-bar">
+        <p style="padding-top: 20px;">Arrow ... <strong>{{week1.0.0}} - {{week1.0.1}}</strong> ... Arrow</p>
+    </div>
+    <div>
+        {% for log in week1.1 %}
+        <div class="overall-week">
+            <div class="day">{{ log.0 }}</div>
+            <div class="week-log">
+                {% for entry in log.1 %}
+                {% if entry.time_started %}
+                <div class="activity-entry entry">
+                    <div class="log-time">{{ entry.time_started }}</div>
+                        <p class="entry-name">{{ entry.activity }}</p>
+                        <p class="entry-calories">{{ entry.calories_burned }} calories burned</p>
+                        <p class="entry-date" style="display: none;">{{ entry.date_started|date:'Y-m-d'}}</p>
+                        <p class="entry-time" style="display: none;">{{ entry.time_started|time:"H:i" }}</p>
+                        <p class="entry-id" style="display: none;">{{entry.id}}</p> 
+                </div>
+                {% elif entry.time_eaten %}
+                <div class="food-entry entry">
+                    <div class="log-time">{{ entry.time_eaten }}</div>
+                        <p class="entry-name">{{ entry.food }}</p>
+                        <p class="entry-calories">{{ entry.calories }} calories</p>
+                        <p class="entry-date" style="display: none;">{{ entry.date_eaten|date:'Y-m-d'}}</p>
+                        <p class="entry-time" style="display: none">{{ entry.time_eaten|time:"H:i" }}</p>
+                        <p class="entry-id" style="display: none;">{{entry.id}}</p>
+                        <p class="entry-protein" style="display: none">{{ entry.protein }}</p>
+                </div>
+                {% else %}
+                    Log: {{ entry }}
+                {% endif %}
+            {% empty %}
+            <div class="empty" style="padding: 0px;">
+                No logs on this day
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+
+<div>
+    <div class="date-bar">
+        <p style="padding-top: 20px;">Arrow ... <strong>{{week2.0.0}} - {{week2.0.1}}</strong> ... Arrow</p>
+    </div>
+    <div>
+        {% for log in week2.1 %}
+        <div class="overall-week">
+            <div class="day">{{ log.0 }}</div>
+            <div class="week-log">
+                {% for entry in log.1 %}
+                {% if entry.time_started %}
+                <div class="activity-entry entry">
+                    <div class="log-time">{{ entry.time_started }}</div>
+                        <p class="entry-name">{{ entry.activity }}</p>
+                        <p class="entry-calories">{{ entry.calories_burned }} calories burned</p>
+                        <p class="entry-date" style="display: none;">{{ entry.date_started|date:'Y-m-d'}}</p>
+                        <p class="entry-time" style="display: none;">{{ entry.time_started|time:"H:i" }}</p>
+                        <p class="entry-id" style="display: none;">{{entry.id}}</p> 
+                </div>
+                {% elif entry.time_eaten %}
+                <div class="food-entry entry">
+                    <div class="log-time">{{ entry.time_eaten }}</div>
+                        <p class="entry-name">{{ entry.food }}</p>
+                        <p class="entry-calories">{{ entry.calories }} calories</p>
+                        <p class="entry-date" style="display: none;">{{ entry.date_eaten|date:'Y-m-d'}}</p>
+                        <p class="entry-time" style="display: none">{{ entry.time_eaten|time:"H:i" }}</p>
+                        <p class="entry-id" style="display: none;">{{entry.id}}</p>
+                        <p class="entry-protein" style="display: none">{{ entry.protein }}</p>
+                </div>
+                {% else %}
+                    Log: {{ entry }}
+                {% endif %}
+            {% empty %}
+            <div class="empty" style="padding: 0px;">
+                No logs on this day
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+<div>
+    <div class="date-bar">
+        <p style="padding-top: 20px;">Arrow ... <strong>{{week3.0.0}} - {{week3.0.1}}</strong> ... Arrow</p>
+    </div>
+    <div>
+        {% for log in week3.1 %}
+        <div class="overall-week">
+            <div class="day">{{ log.0 }}</div>
+            <div class="week-log">
+                {% for entry in log.1 %}
+                {% if entry.time_started %}
+                <div class="activity-entry entry">
+                    <div class="log-time">{{ entry.time_started }}</div>
+                        <p class="entry-name">{{ entry.activity }}</p>
+                        <p class="entry-calories">{{ entry.calories_burned }} calories burned</p>
+                        <p class="entry-date" style="display: none;">{{ entry.date_started|date:'Y-m-d'}}</p>
+                        <p class="entry-time" style="display: none;">{{ entry.time_started|time:"H:i" }}</p>
+                        <p class="entry-id" style="display: none;">{{entry.id}}</p> 
+                </div>
+                {% elif entry.time_eaten %}
+                <div class="food-entry entry">
+                    <div class="log-time">{{ entry.time_eaten }}</div>
+                        <p class="entry-name">{{ entry.food }}</p>
+                        <p class="entry-calories">{{ entry.calories }} calories</p>
+                        <p class="entry-date" style="display: none;">{{ entry.date_eaten|date:'Y-m-d'}}</p>
+                        <p class="entry-time" style="display: none">{{ entry.time_eaten|time:"H:i" }}</p>
+                        <p class="entry-id" style="display: none;">{{entry.id}}</p>
+                        <p class="entry-protein" style="display: none">{{ entry.protein }}</p>
+                </div>
+                {% else %}
+                    Log: {{ entry }}
+                {% endif %}
+            {% empty %}
+            <div class="empty" style="padding: 0px;">
+                No logs on this day
+            </div>
+            {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+
+<div class="food-popup popup-overlay" id="popupOverlay">
+    <div class="edit-entry popup-content" style="width: 300px; height: 400px;">
+        <button class="close-entry close-button" id="food-closePopup">&times;</button>
+        Food: <input type="text" name="new-food" id="new-food">
+        Calories: <input type="number" name="new-food-calories" id="new-food-calories">
+        Protein: <input type="number" name="new-food-protein" id="new-food-protein">
+        Date: <input type="date" name="new-food-date" id="new-food-date">
+        Time: <input type="time" name="new-food-time" id="new-food-time">
+        <button class="delete-entry" id="food-delete-entry">Delete Entry</button>
+        <button class="cancel-entry" id="food-cancelPopup">Cancel</button>
+        <button class="save-entry" id="food-save-entry">Save</button>
+    </div>
+</div>
+
+<div class="activity-popup popup-overlay" id="popupOverlay">
+    <div class="edit-entry popup-content" style="width: 300px; height: 400px;">
+        <button class="close-entry close-button" id="activity-closePopup">&times;</button>
+        Activity: <input type="text" name="new-activity" id="new-activity">
+        Calories burned: <input type="number" name="new-activity-calories" id="new-activity-calories">
+        Date: <input type="date" name="new-activity-date" id="new-activity-date">
+        Time: <input type="time" name="new-activity-time" id="new-activity-time">
+        <button class="delete-entry" id="activity-delete-entry">Delete Entry</button>
+        <button class="cancel-entry" id="activity-cancelPopup">Cancel</button>
+        <button class="save-entry" id="activity-save-entry">Save</button>
+    </div>
+</div>
+
+<script src="{% static 'tracker/logs.js' %}"></script>
+{% endblock %}

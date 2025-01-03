@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import models
 #from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import date, datetime
@@ -15,9 +16,9 @@ class Stats(models.Model):
         ("add", "Gain Muscle"),
     )
     current_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="current_user")
-    goals = models.JSONField(default=list())
+    goals = models.JSONField(default=list)
     weight = models.IntegerField(default=0)         # in lbs
-    weights = models.JSONField(default=list())
+    weights = models.JSONField(default=list)
     weight_goal = models.IntegerField(default=0)    # in lbs
     height = models.IntegerField(default=0)         # in inches
     date_started = models.DateField(default=timezone.now)
@@ -37,8 +38,8 @@ class Food(models.Model):
     
 class Goal(models.Model):
     current_user = models.ForeignKey(User, on_delete = models.CASCADE, related_name="goal_creator")
-    workout = models.JSONField(default=dict())
-    days = models.JSONField(default=list())
+    workout = models.JSONField(default=dict)
+    days = models.JSONField(default=list)
     date_started = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

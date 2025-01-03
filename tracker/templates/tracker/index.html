@@ -10,8 +10,9 @@
 </div>
 <style>
     th {
-        background-color: rgb(170, 170, 170);
-    }
+    background-color: rgb(180, 180, 180);
+    text-transform: capitalize;
+}
 </style>
 
 <ul id="stats">
@@ -43,7 +44,7 @@
                 <p class="perc" style="margin: auto; color: black;">0%</p>
             </div>
         </li>
-        <p style="display: none" class="box-url">{% url 'account' %}</p>
+        <p style="display: none" class="box-url">{% url 'logs' %}</p>
     </div>
     <div class="stat hasProgress">
         <li>
@@ -58,7 +59,7 @@
                 <p class="perc" style="margin: auto; color: black;">0%</p>
             </div>
         </li>
-        <p style="display: none" class="box-url">{% url 'account' %}</p>
+        <p style="display: none" class="box-url">{% url 'logs' %}</p>
     </div>
     <div class="stat">
         <li>
@@ -83,8 +84,8 @@
             <div class="big-table">
                 <table>
                     <tr>
-                        <th>Day</th>
-                        <th>Workout</th>
+                        <th>DAY</th>
+                        <th>WORKOUT</th>
                     </tr>
                     {% for day in workout %}
                         {% for name, exercise in day.items %}
@@ -113,27 +114,18 @@
                 <div style="display: inline-block;">
                     Today's Workout
                 </div>
-                <div class="completed-status" style="position: absolute; top: 0; right: 0; margin-right: 10px; margin-top: -10px;">
-                    {% if workout %}
-                    {% if done %}
-                    Completed <i class="fas fa-check green-check" style="color:rgb(4, 172, 4);"></i>
-                    {% else %}
-                    <button><a href="activity">Log Activity</a></button>
-                    {% endif %}
-                    {% endif %}
-                </div>
             </div>
             <div class="big-table" style="margin-top: 5px;">
                 {% for day, workout in today.items %}
                 {% for title, exercises in workout.items %}
                 {% if title == 'Rest' %}
-                <h3>Rest day</h3>
+                <h1 style="margin-top: 120px; background-color: #181D4B; width:200px; border-radius: 10px; margin-left: 110px; color: white"><strong>Rest day</strong></h1>
                 {% else %}
                 <h8><strong>{{title}}</strong></h8>
                 <table>
                     <tr>
-                        <th>Exercise</th>
-                        <th>Sets and Reps</th>
+                        <th>EXERCISE</th>
+                        <th>SETS AND REPS</th>
                     </tr>
                     {% for exercise in exercises %}
                     <tr>

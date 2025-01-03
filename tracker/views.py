@@ -15,6 +15,7 @@ from django.conf import settings
 from .workouts import get_workout
 import json
 from datetime import datetime, timedelta
+from itertools import chain
 
 def login_page(request):
     if not request.user.is_authenticated:
@@ -225,7 +226,8 @@ def set_dates(request):
     if request.user.is_authenticated:
         if request.method == 'POST':
             days = request.POST.getlist("day")
-            workout = get_workout(len(days))
+            goals = Stats.objects.get(current_user = request.user)
+            workout = get_workout(len(days), goals.goals)
             Goal(current_user = request.user, workout=workout, days = days, date_started=datetime.now()).save()
             return redirect('index')
         else:
@@ -264,7 +266,7 @@ def log_activity(request):
             activity = request.POST['activity_name']
             duration = int(request.POST['duration'])
             calories = int(request.POST['calories'])
-            Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = calories, date_started=datetime.now()).save()
+            Activity_Log(current_user = request.user, activity = activity, duration = duration, calories_burned = calories, date_started=datetime.now(), time_started = datetime.now()).save()
             return redirect('index')
         else:
             return render(request, "tracker/activity.html")
@@ -329,6 +331,7 @@ def account(request):
             return_dict["weight_goal"] = weight_goal
             return_dict["full_goals"] = full_goals
             return_dict["height"] = height
+            return_dict["full_days"] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             return render(request, "tracker/account.html", return_dict)
         except ObjectDoesNotExist:
             return redirect('index')
@@ -341,37 +344,152 @@ def update_stats(request):
     if request.method == 'POST':
         try:
             old = Stats.objects.get(current_user = request.user)
+            old_goals = Goal.objects.get(current_user = request.user)
             weights = old.weights
             data = json.loads(request.body)
             new_weight = data.get('weight')
             weight_goal = data.get('weight_goal')
             height = data.get('new_height')
             goals = data.get('goals')
-            weights.append((new_weight, str(datetime.now())))
+            days = data.get('days')
+            if int(new_weight) != int(old.weight):
+                weights.append((int(new_weight), str(datetime.now())))
             old.goals = goals
             old.weight = new_weight
             old.weights = weights
-            old.height = height
+            old.height = int(height)
             old.weight_goal = weight_goal
+            old_goals.workout = get_workout(len(days), goals)
+            old_goals.days = days
+            old_goals.save()
             old.save()
-            return JsonResponse({'message': 'Received'})
+            return JsonResponse({'message': [new_weight, old.weight]})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
-def update_days(request):
+
+def logs(request):
+    if request.user.is_authenticated:
+        return_dict = dict()
+        week1start = (datetime.now() - timedelta(days=6)).strftime('%m/%d/%Y')
+        week1end = (datetime.now()).strftime('%m/%d/%Y')
+        week2start = (datetime.now() - timedelta(days=13)).strftime('%m/%d/%Y')
+        week2end = (datetime.now() - timedelta(days = 7)).strftime('%m/%d/%Y')
+        week3start = (datetime.now() - timedelta(days=20)).strftime('%m/%d/%Y')
+        week3end = (datetime.now() - timedelta(days = 14)).strftime('%m/%d/%Y')
+        today = datetime.now()
+        logs1 = []
+        logs2 = []
+        logs3 = []
+        week2 = []
+        week3 = []
+        for i in range(0, 7):
+            past_day = (today - timedelta(days=i))
+            act_logs = Activity_Log.objects.filter(current_user = request.user, date_started = past_day)
+            food_logs = Food_Log.objects.filter(current_user = request.user, date_eaten = past_day)
+            combined = sorted(chain(act_logs, food_logs), key=lambda x: x.time_started if hasattr(x, 'time_started') else x.time_eaten)
+            logs1.append((past_day.strftime('%A, %m/%d/%Y'), combined))
+        for i in range(7, 14):
+            past_day = today - timedelta(days=i)
+            act_logs = Activity_Log.objects.filter(current_user = request.user, date_started = past_day)
+            food_logs = Food_Log.objects.filter(current_user = request.user, date_eaten = past_day)
+            combined = sorted(chain(act_logs, food_logs), key=lambda x: x.time_started if hasattr(x, 'time_started') else x.time_eaten)
+            combined.reverse()
+            logs2.append((past_day.strftime('%A, %m/%d/%Y'), combined))
+        for i in range(14, 21):
+            past_day = (today - timedelta(days=i))
+            act_logs = Activity_Log.objects.filter(current_user = request.user, date_started = past_day)
+            food_logs = Food_Log.objects.filter(current_user = request.user, date_eaten = past_day)
+            combined = sorted(chain(act_logs, food_logs), key=lambda x: x.time_started if hasattr(x, 'time_started') else x.time_eaten)
+            combined.reverse()
+            logs3.append((past_day.strftime('%A, %m/%d/%Y'), combined))
+        week1 = [(week1start, week1end), logs1]
+        week2 = [(week2start, week2end), logs2]
+        week3 = [(week3start, week3end), logs3]
+        return_dict["week1"] = week1
+        return_dict["week2"] = week2
+        return_dict["week3"] = week3
+        return render(request, "tracker/logs.html", return_dict)
+    else: 
+        return redirect('index')
+    
+
+def edit_food(request, id):
     if request.method == 'POST':
         try:
-            old = Goal.objects.get(current_user = request.user)
-            data = json.loads(request.body)
-            days = data.get('days')
-            workout = get_workout(len(days))
-            old.days = days
-            old.workout = workout
-            old.save()
+            try:
+                data = json.loads(request.body)
+                new_time = data.get('newTime')
+                new_date = data.get('newDate')
+                new_name = data.get('newName')
+                new_calories = int(data.get('newCalories'))
+                new_protein = int(data.get('newProtein'))
+                food = Food_Log.objects.get(current_user = request.user, pk=id)
+                food.food = new_name
+                food.calories = new_calories
+                food.protein = new_protein
+                food.date_eaten = new_date
+                food.time_eaten = new_time
+                food.save()
+            except Food_Log.DoesNotExist:
+                return JsonResponse({'error': 'You cannot edit this content'})
+            return JsonResponse({'message': "received"})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+def edit_activity(request, id):
+    if request.method == 'POST':
+        try:
+            try:
+                data = json.loads(request.body)
+                new_date = data.get('newDate')
+                new_time = data.get('newTime')
+                new_name = data.get('newName')
+                new_calories = int(data.get('newCalories'))
+                activity = Activity_Log.objects.get(current_user = request.user, pk=id)
+                activity.activity = new_name
+                activity.calories_burned = new_calories
+                activity.time_started = new_time
+                activity.date_started = new_date
+                activity.save()
+            except Activity_Log.DoesNotExist:
+                return JsonResponse({'error': 'You cannot edit this content'})
+            return JsonResponse({'message': 'received'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+
+def delete_activity(request, id):
+    if request.method == 'POST':
+        try:
+            try:
+                activity = Activity_Log.objects.get(current_user = request.user, pk=id)
+                activity.delete()
+            except Activity_Log.DoesNotExist:
+                return JsonResponse({'error': 'You cannot edit this content'})
             return JsonResponse({'message': 'received'})
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
+
+def delete_food(request, id):
+    if request.method == 'POST':
+        try:
+            try:
+                data = json.loads(request.body)
+                food = Food_Log.objects.get(current_user = request.user, pk=id)
+                food.delete()
+            except Activity_Log.DoesNotExist:
+                return JsonResponse({'error': 'You cannot edit this content'})
+            return JsonResponse({'message': 'received'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)

@@ -13,5 +13,9 @@ urlpatterns = [
     path('logfood/', views.log_food, name="logfood"),
     path('account', views.account, name="account"),
     path('update_stats/', views.update_stats, name="update_stats"),
-    path('update_days/', views.update_days, name="update_days")
+    path('logs/', views.logs, name="logs"),
+    path('editfood/<int:id>', views.edit_food, name="editfood"),
+    path('editactivity/<int:id>', views.edit_activity, name="editactivity"),
+    path('deleteactivity/<int:id>', views.delete_activity, name="deleteactivity"),
+    path('deletefood/<int:id>', views.delete_food, name="deletefood")
 ]

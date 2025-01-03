@@ -27,14 +27,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     saveStats.addEventListener('click', () => {
+
         const weight = document.getElementById('new_weight').value;
         const weight_goal = document.getElementById('new_weight_goal').value;
         const new_height = (Number(height_ft.value) * 12) + (Number(height_in.value));
         const goals = document.querySelectorAll('input[name="goal"]:checked');
+        const days = document.querySelectorAll('input[name="day"]:checked');
 
         const goalValues = [];
         goals.forEach(checkbox => {
             goalValues.push(checkbox.value);
+        });
+
+        const dayValues = [];
+        days.forEach(checkbox => {
+            dayValues.push(checkbox.value);
         });
         
         fetch('/update_stats/', {
@@ -47,7 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 weight: weight,
                 weight_goal : weight_goal,
                 new_height : new_height,
-                goals: goalValues
+                goals: goalValues,
+                days: dayValues
             })
         })
         .then(response => response.json())

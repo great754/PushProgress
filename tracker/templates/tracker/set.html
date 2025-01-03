@@ -17,7 +17,7 @@
         })
     })
 </script>
-<div class="form-box" style="width: 508px; height: 500px;">
+<div class="form-box" style="width: 508px; height: 520px;">
     <form action="{% url 'set' %}" method="post">
         {% csrf_token %}
         <h2 class="form-title"><strong>Setup</strong></h2>
@@ -30,21 +30,23 @@
         <input type="number" name="height_ft" min="2" max="7" class="text-box" style="width: 60px; margin-left: 100px;"> <strong>ft</strong>
         <input type="number" name="height_in" min="0" max="11" class="text-box" style="width: 60px;"> <strong>in</strong>
         <div class="form-label">
-            <strong>Goals</strong>
+            <strong style="font-size: 18px; margin-right: 140px;">Goals</strong>
         </div>
-        <div style="margin-top: 20px">
+        <div style="margin-top: 20px; margin-bottom: 20px;">
             {% for choice in choices %}
             <div style="text-align: left; font-size: 15px;">
-                <input style="margin-left: 73px;" id="{{choice}}" class="checkboxes" type="checkbox" name="goal" value="{{choice}}"> &nbsp; {{choice}}
+                <input id="{{choice}}" class="checkboxes" type="checkbox" name="goal" value="{{choice}}"> &nbsp; {{choice}}
             </div>
             {% endfor %}
         </div>
         <div>
-            <strong>Weight Goal</strong>
-            <input class="text-box" type="number" name="weight_goal" min="50" max="1000" style="width: 100px;">
+            <strong style="font-size: 18px; margin-right: 265px;">Weight Goal</strong>
+            <div style="margin-right: 245px; margin-top: -10px;">
+                <input class="text-box" type="number" name="weight_goal" min="50" max="1000" style="width: 100px;"> <strong>lbs</strong>
+            </div>
         </div>
         
-        <input type="submit">
+        <input type="submit" class="form-button">
         
     </form>
 </div>

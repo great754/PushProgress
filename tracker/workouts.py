@@ -106,11 +106,89 @@ four_day = {
     ]
 }
 
-def get_workout(days):
+lose_one_day = {
+    "30 Minute Cardio": [
+        {"Warm-up": "5 minutes of light cardio"},
+        {"Jumping Jacks": "3 sets of 30 seconds"},
+        {"High Knees": "3 sets of 30 seconds"},
+        {"Arm Circles": "3 sets of 30 seconds"},
+        {"Moderate-intensity Cardio": "20 minutes of brisk walking or cycling"},
+        {"High-intensity Intervals": "10 sets of 30 seconds each"},
+        {"Cool-down": "5 minutes of walking at a slower pace"}
+    ]
+}
+
+lose_two_day = {
+    "Cardio": [
+        {"Warm-up": "5-10 minutes light cardio"},
+        {"Cardio": "30-45 minutes moderate-intensity cardio"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ],
+    "Cardio": [
+        {"Warm-up": "5-10 minutes light cardio"},
+        {"Cardio": "20-30 minutes HIIT"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ]
+}
+
+lose_three_day = {
+    "Steady State Cardio": [
+        {"Warm-up": "5-10 minutes light cardio"},
+        {"Cardio": "30-45 minutes moderate-intensity cardio"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ],
+    "High-Intensity Interval Training (HIIT)": [
+        {"Warm-up": "5-10 minutes dynamic stretching"},
+        {"Cardio": "20-30 minutes HIIT"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ],
+    "Active Recovery/Cross-Training": [
+        {"Warm-up": "5 minutes light movement"},
+        {"Cardio": "30-45 minutes low-impact activity"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ]
+}
+
+lose_four_day = {
+    "Day 1: Endurance Cardio": [
+        {"Warm-up": "5-10 minutes light cardio"},
+        {"Cardio": "45-60 minutes moderate-intensity cardio"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ],
+    "Day 2: HIIT - Lower Body Focus": [
+        {"Warm-up": "5-10 minutes dynamic stretching"},
+        {"Cardio": "20-30 minutes HIIT."},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ],
+    "Day 3: Active Recovery/Cross-Training": [
+        {"Warm-up": "5 minutes light movement"},
+        {"Cardio": "30-45 minutes low-impact activity"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ],
+    "Day 4: HIIT - Upper Body/Full Body Focus": [
+        {"Warm-up": "5-10 minutes dynamic stretching"},
+        {"Cardio": "20-30 minutes HIIT"},
+        {"Cool-down": "5-10 minutes static stretching"}
+    ]
+}
+
+def get_workout(days, goals):
     if days == 1:
-        return one_day
+        if "Lose Weight" in goals:
+            return lose_one_day
+        else:
+            return one_day
     elif days == 2:
-        return two_day
+        if "Lose Weight" in goals:
+            return lose_two_day
+        else: 
+            return two_day
     elif days == 3:
-        return three_day
-    else: return four_day
+        if "Lose Weight" in goals:
+            return lose_three_day
+        else:
+            return three_day
+    else: 
+        if "Lose Weight" in goals:
+            return lose_four_day
+        else: return four_day
