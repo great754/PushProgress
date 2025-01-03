@@ -1,4 +1,25 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let page = 3;
+    document.querySelector('#arrow-right-1').style.display = 'none';
+    document.querySelector('#arrow-left-1').addEventListener("click", () => {
+        document.querySelector('#week1').style.display = 'none';
+        document.querySelector('#week2').style.display = 'block';
+    })
+    document.querySelector('#arrow-left-2').addEventListener("click", () => {
+        document.querySelector('#week2').style.display = 'none';
+        document.querySelector('#week3').style.display = 'block';
+    })
+    document.querySelector('#arrow-left-3').style.display = 'none';
+    document.querySelector('#arrow-right-2').addEventListener("click", () => {
+        document.querySelector('#week1').style.display = 'block';
+        document.querySelector('#week2').style.display = 'none';
+    })
+    document.querySelector('#arrow-right-3').addEventListener("click", () => {
+        document.querySelector('#week3').style.display = 'none';
+        document.querySelector('#week2').style.display = 'block';
+    })
+
+
     const first = document.querySelector('.week-log');
     const logs = first.querySelectorAll('.entry');
     if (logs.length < 1) {

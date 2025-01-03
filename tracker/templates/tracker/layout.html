@@ -37,6 +37,11 @@
                       <a class="dropdown-item" href="{% url 'activity' %}"style="border-down: 1px; border-style: solid;">Activity</a>
                       <a class="dropdown-item" href="{% url 'logfood' %}">Food</a>
                   </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logs' %}">
+                        <i class="fas fa-history" style="margin-right: 3px;"></i>Entries
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'account' %}">
                         <i class="fas fa-user"></i> <strong>{{ user.username }}</strong>
@@ -69,4 +74,11 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     </body>
+    <div style="text-align: center; font-size: 10px; margin-top: 30px;">
+        Created by Great Abhieyighan
+    </div>
+    <div style="text-align: center; font-size: 20px;">
+        <a href="https://github.com/great754" style="color: black;"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/great754" style="color: black;"><i class="fab fa-linkedin"></i></a>
+    </div>
 </html>

@@ -3,9 +3,11 @@
 {% block body %}
 <div id="hiddencsrf" style="display: none">{{csrf_token}}</div>
 
-<div>
+<div id="week1" style="margin-bottom: 50px;">
     <div class="date-bar">
-        <p style="padding-top: 20px;">Arrow ... <strong>{{week1.0.0}} - {{week1.0.1}}</strong> ... Arrow</p>
+        <div id="arrow-left-1" class="arrow-left"></div>
+        <p class="date-text" style="padding-top: 3px;"><strong>{{week1.0.0}} - {{week1.0.1}}</strong></p>
+        <div class="arrow-right" id="arrow-right-1"></div>
     </div>
     <div>
         {% for log in week1.1 %}
@@ -47,9 +49,11 @@
 </div>
 
 
-<div>
+<div id="week2" style="display: none">
     <div class="date-bar">
-        <p style="padding-top: 20px;">Arrow ... <strong>{{week2.0.0}} - {{week2.0.1}}</strong> ... Arrow</p>
+        <div id="arrow-left-2" class="arrow-left"></div>
+        <p class="date-text" style="padding-top: 3px;"><strong>{{week2.0.0}} - {{week2.0.1}}</strong></p>
+        <div class="arrow-right" id="arrow-right-2"></div>
     </div>
     <div>
         {% for log in week2.1 %}
@@ -90,9 +94,11 @@
     </div>
 </div>
 
-<div>
+<div id="week3" style="display: none">
     <div class="date-bar">
-        <p style="padding-top: 20px;">Arrow ... <strong>{{week3.0.0}} - {{week3.0.1}}</strong> ... Arrow</p>
+        <div id="arrow-left-3" class="arrow-left"></div>
+        <p class="date-text" style="padding-top: 3px;"><strong>{{week3.0.0}} - {{week3.0.1}}</strong></p>
+        <div class="arrow-right" id="arrow-right-3"></div>
     </div>
     <div>
         {% for log in week3.1 %}
@@ -135,29 +141,55 @@
 
 
 <div class="food-popup popup-overlay" id="popupOverlay">
-    <div class="edit-entry popup-content" style="width: 300px; height: 400px;">
-        <button class="close-entry close-button" id="food-closePopup">&times;</button>
-        Food: <input type="text" name="new-food" id="new-food">
-        Calories: <input type="number" name="new-food-calories" id="new-food-calories">
-        Protein: <input type="number" name="new-food-protein" id="new-food-protein">
-        Date: <input type="date" name="new-food-date" id="new-food-date">
-        Time: <input type="time" name="new-food-time" id="new-food-time">
-        <button class="delete-entry" id="food-delete-entry">Delete Entry</button>
-        <button class="cancel-entry" id="food-cancelPopup">Cancel</button>
-        <button class="save-entry" id="food-save-entry">Save</button>
+    <div class="edit-entry popup-content" style="width: 300px; height: 500px;">
+        <strong>Edit Food</strong><button class="close-entry close-button" id="food-closePopup" style="margin-left: 160px;">&times;</button>
+        <div style="font-weight: bold; margin-top: 9px;">Food</div>
+        <input type="text" name="new-food" id="new-food" class="text-box" style="width: 230px; margin-top: -1px; height: 50px;">
+        <div style="display: flex">
+            <div style="font-weight: bold;">Calories</div><div style="font-weight: bold; margin-left: 103px;">Protein</div>
+        </div>
+        <div style="display: flex">
+            <input type="number" name="new-food-calories" id="new-food-calories" class="text-box" style="width: 80px; margin-top: -1px; height: 50px; margin-right: 2px;"> <strong style="margin-top: 12px;">kcal</strong>
+            <input type="number" name="new-food-protein" id="new-food-protein" class="text-box" style="width: 80px; margin-top: -1px; height: 50px; margin-left: 50px; margin-right: 2px;"><strong style="margin-top: 12px;">g</strong>
+        </div>
+        <div style="font-weight: bold">Date</div>
+        <input type="date" name="new-food-date" id="new-food-date" class="text-box" style="width: 140px; margin-top: -1px; height: 50px;">
+        <div style="font-weight: bold">Time</div>
+        <input type="time" name="new-food-time" id="new-food-time" class="text-box" style="width: 140px; margin-top: -1px; height: 50px;">
+        <div style="text-align: center;">
+            <button class="delete-entry" id="food-delete-entry" 
+            style="border-style: none; background-color: transparent;"><i class="fas fa-trash"></i></button>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <button class="cancel-entry form-button" id="food-cancelPopup" style="width: 100px; background-color: gray; margin-right: 12px;">Cancel</button>
+        <button class="save-entry form-button" id="food-save-entry" class="form-button" style="width: 100px;">Save</button>
+        </div>
     </div>
 </div>
 
 <div class="activity-popup popup-overlay" id="popupOverlay">
-    <div class="edit-entry popup-content" style="width: 300px; height: 400px;">
-        <button class="close-entry close-button" id="activity-closePopup">&times;</button>
-        Activity: <input type="text" name="new-activity" id="new-activity">
-        Calories burned: <input type="number" name="new-activity-calories" id="new-activity-calories">
-        Date: <input type="date" name="new-activity-date" id="new-activity-date">
-        Time: <input type="time" name="new-activity-time" id="new-activity-time">
-        <button class="delete-entry" id="activity-delete-entry">Delete Entry</button>
-        <button class="cancel-entry" id="activity-cancelPopup">Cancel</button>
-        <button class="save-entry" id="activity-save-entry">Save</button>
+    <div class="edit-entry popup-content" style="width: 300px; height: 500px;">
+        <strong style="margin-right: 135px;">Edit Activity</strong><button class="close-entry close-button" id="activity-closePopup">&times;</button>
+        <div style="font-weight: bold; margin-top: 9px;">Activity</div>
+        <div>
+            <input type="text" name="new-activity" id="new-activity" class="text-box" style="width: 230px; margin-top: -1px; height: 50px;">
+        </div>
+        <div style="font-weight: bold;">Calories</div>
+        <input type="number" name="new-activity-calories" id="new-activity-calories" class="text-box" 
+        style="width: 80px; margin-top: -1px; height: 50px; margin-right: 2px;"> 
+        <strong style="margin-top: 12px;">kcal</strong>
+        <div style="font-weight: bold">Date</div>
+        <input type="date" name="new-activity-date" id="new-activity-date" class="text-box" style="width: 140px; margin-top: -1px; height: 50px;">
+        <div style="font-weight: bold">Time</div>
+        <input type="time" name="new-activity-time" id="new-activity-time" class="text-box" style="width: 140px; margin-top: -1px; height: 50px;">
+        <div style="text-align: center;">
+            <button class="delete-entry" id="activity-delete-entry" 
+            style="border-style: none; background-color: transparent;"><i class="fas fa-trash"></i></button>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <button class="cancel-entry form-button" id="activity-cancelPopup" style="width: 100px; background-color: gray; margin-right: 12px;">Cancel</button>
+            <button class="save-entry form-button" id="activity-save-entry" class="form-button" style="width: 100px;">Save</button>
+        </div>
     </div>
 </div>
 

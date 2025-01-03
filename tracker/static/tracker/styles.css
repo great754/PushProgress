@@ -263,6 +263,11 @@ body {
     -moz-transform: scale(1.5);
 }
 
+.date-text {
+    margin: auto;
+    font-size:30px;;
+}
+
 .date-bar {
     width: 45%;
     height: 62px;
@@ -273,14 +278,30 @@ body {
     border-radius: 12px;
     color: white;
     text-align: center;
+    display: flex;
+    margin-bottom: 50px;
 }
 
-.left-arrow {
+.arrow-left {
     width: 0;
     height: 0;
+    border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid #FFFFFF;
+    border-right: 15px solid rgb(255, 255, 255);
+    cursor: pointer;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.arrow-right {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid white;
+    margin-top: 20px;
+    margin-right: 10px;
+    cursor: pointer;
 }
 
 
@@ -376,4 +397,27 @@ body {
 .log:hover {
     transform: scale(1.05);
     background-color: rgb(130, 130, 130);
+}
+
+.delete-entry i {
+    color: red;
+    transition: color 0.3s ease;
+}
+
+.delete-entry:hover i {
+    color: rgb(0, 0, 0);
+}
+
+
+.cancel-entry:hover {
+    transform: scale(1.05);
+}
+
+.save-entry:hover {
+    transform: scale(1.05);
+}
+
+.close-button:hover {
+    background-color: rgba(128, 128, 128, 0.24);
+    border-radius: 50px;
 }
