@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load static %}
+    <head>
+        <title>Push Progress</title>
+        <link rel="icon" type="image/x-icon" href="{% static 'tracker/icon.png' %}">
+        <link href="https://fonts.googleapis.com/css?family=Inter" rel="stylesheet">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'tracker/styles.css' %}">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <i class="fas fa-chart-line"></i> <strong>Push Progress</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+              <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-clipboard"></i> Log
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="{% url 'activity' %}"style="border-down: 1px; border-style: solid;">Activity</a>
+                      <a class="dropdown-item" href="{% url 'logfood' %}">Food</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logs' %}">
+                        <i class="fas fa-history" style="margin-right: 3px;"></i>Entries
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'account' %}">
+                        <i class="fas fa-user"></i> <strong>{{ user.username }}</strong>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                </li>
+            {% endif %}
+              </ul>
+            </div>
+        </nav>
+        <div class="body">
+            {% block body %}
+            {% endblock %}
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    </body>
+    <div style="text-align: center; font-size: 10px; margin-top: 30px;">
+        Created by Great Abhieyighan
+    </div>
+    <div style="text-align: center; font-size: 20px;">
+        <a href="https://github.com/great754" style="color: black;"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/great754" style="color: black;"><i class="fab fa-linkedin"></i></a>
+    </div>
+</html>

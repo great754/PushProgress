@@ -1,0 +1,94 @@
+{% extends "tracker/layout.html" %}
+{% block body %}
+{% load static %}
+<meta name="csrf-token" content="{{ csrf_token }}">
+
+<div class="popup-overlay" id="popupOverlay">
+  <div id="edit-stats" class="popup-content" style="display: flex; flex-direction: column; flex-wrap: wrap;">
+    <button class="close-button close-popup" style="margin-left: auto;" id="closePopup">&times;</button>
+    <div style="display: flex; flex-wrap: wrap;">
+      <div style="padding-right: 100px;">
+        <div style="font-weight: bold;">
+          Goals
+        </div>
+        <div>
+          {% for goal in full_goals %}
+          <div>
+            <input style="margin-right: 3px;" type="checkbox" name="goal" value="{{goal}}" {% if goal in goals %} checked {% endif %}>{{goal}}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <div style="font-weight: bold;">
+          Days
+        </div>
+        {% for day in full_days %}
+        <div>
+          <input type="checkbox" style="margin-right: 3px;" name="day" value="{{day}}" {% if day in days %} checked {% endif %}>{{day}}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div style="display: flex; margin-top: 30px;">
+      <div style="padding-right: 100px;">
+        <div style="font-weight: bold; margin-bottom: -10px;">
+          Weight
+        </div>
+        <input id="new_weight" value="{{weight}}" style="width: 100px;" class="text-box"> lbs
+      </div>
+      <div>
+        <div style="font-weight: bold; margin-bottom: -10px;">
+          Weight Goal
+        </div>
+        <input type="text" value="{{weight_goal}}" id="new_weight_goal" max="600" style="width: 100px;" class="text-box"> lbs
+      </div>
+    </div>
+    <div style="font-weight: bold;">
+      Height
+    </div>
+    <div>
+      <input type="number" id="new_height_ft" min="2" max="8" style="width: 50px; margin-right: 2px;" class="text-box">ft 
+      <input type="number" id="new_height_in" min="0" max="12" style="width: 50px;" class="text-box"> in
+    </div>
+    <div style="display: flex;">
+      <button class="cancel-edit form-button" id="cancelPopup" style="background-color: gray; color: white; margin:3px;">Cancel</button>
+      <button class="save-edit form-button" id="save-stats" style="margin:3px;">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="account-user" style="margin-top: 15px;">
+  <i class="fas fa-user" style="font-size: 50px; margin-bottom: 10px;"></i>
+  <div><strong>{{user.username}}</strong></div>
+  <div>{{user.first_name}} {{user.last_name}}</div>
+  <div>{{user.email}}</div>
+</div>
+
+<div class="account-settings">
+  <div style="display: flex;">
+    <h4 style="padding-left: 10px; padding-top: 10px;"><strong>Settings</strong></h4>
+    <button id="update-stats" style="margin-left: auto; margin-top: -25px;"><i class="fas fa-edit"></i></button>
+  </div>
+  <div style="padding: 10px;"> You weigh {{weight}} lbs </div>
+  <div style="padding: 10px;"> Your weight goal is {{weight_goal}} lbs </div>
+  <div style="padding: 10px; display: none;" id="height"> {{height}} </div>
+  <div style="padding: 10px;" id="workoutDays"> You can work out on: {% for day in days %}{{ day }}, {% endfor %}</div>
+  <div style="padding: 10px;"> You started on {{date_started}}</div>
+</div>
+
+<div class="account-history">
+  <h4><strong>Weight History</strong></h4>
+  <div style="display: none;"> 
+    {% for new_weight in weights%}
+    <div class="weights">{{new_weight.0}}</div>
+    <div class="days">{{new_weight.1}}</div>
+    {% endfor %}
+  </div>
+  
+  <canvas style="margin: auto;" id="myChart" style="width:50%;max-width:450px; height: 250px; margin-top: 10px; text-align: center;"></canvas>
+</div>
+
+<script src="{% static 'tracker/account.js' %}"></script>
+
+{% endblock %}

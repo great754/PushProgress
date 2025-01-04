@@ -1,10 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <title>Push Progress</title>
-        <h2>Welcome to Push Progress!</h2>
-    </head>
-    <body>
+{% extends "tracker/layout.html" %}
 
-    </body>
-</html>
+{% block body %}
+{% load static %}
+<div id="currDiff" style="display: none">
+    {{curr_diff}}
+</div>
+<div id="totalDiff" style="display:none">
+    {{total_diff}}
+</div>
+<div id="welcome">
+    <h3>Welcome Back, <strong>{{user.username}}</strong></h3>
+</div>
+<div id="index_date" style="background-color:#BDD4E7; width: 380px; text-align:center; margin: 0 auto; border-radius: 8px;">
+    {{day}}, {{date}}
+</div>
+<style>
+    th {
+    background-color: rgb(180, 180, 180);
+    text-transform: capitalize;
+}
+</style>
+
+<ul id="stats">
+    <div class="stat hasProgress">
+        <li>
+            <div class="title">
+                Current Weight
+            </div>
+            <div class="info">
+                {{weight}}/{{weight_goal}} lbs
+            </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+                <p class="perc" style="margin: auto; color: black;">0%</p>
+            </div>
+        </li>
+        <p style="display: none" class="box-url">{% url 'account' %}</p>
+    </div>
+    <div class="stat hasProgress">
+        <li>
+            <div class="title">
+                Calories eaten today
+            </div>
+            <div class="info">
+                {{total_calories}}/{{calorie_goal}} kcal
+            </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+                <p class="perc" style="margin: auto; color: black;">0%</p>
+            </div>
+        </li>
+        <p style="display: none" class="box-url">{% url 'logs' %}</p>
+    </div>
+    <div class="stat hasProgress">
+        <li>
+            <div class="title">
+                Total protein today
+            </div>
+            <div class="info">
+                {{total_protein}}/{{protein_goal}} g
+            </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+                <p class="perc" style="margin: auto; color: black;">0%</p>
+            </div>
+        </li>
+        <p style="display: none" class="box-url">{% url 'logs' %}</p>
+    </div>
+    <div class="stat">
+        <li>
+            <div class="title">
+                Calories burned today
+            </div>
+            <div class="info">
+                {{calories_burned}} kcal
+            </div>
+        </li>
+        <p style="display: none" class="box-url">{% url 'account' %}</p>
+    </div>
+</ul>
+
+<ul id="big-details">
+    {% if workout %}
+    <li>
+        <div class="big-detail">
+            <div class="big-title">
+                Workout Routine
+            </div>
+            <div class="big-table">
+                <table>
+                    <tr>
+                        <th>DAY</th>
+                        <th>WORKOUT</th>
+                    </tr>
+                    {% for day in workout %}
+                        {% for name, exercise in day.items %}
+                    <tr>
+                        <td> {{name}} </td>
+                        {% for title in exercise %}
+                            <td> {{title}} </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </li>
+    {% else %}
+    <li>
+        <div>
+            <a href="{% url 'set_dates' %}"><button>Set Dates to suggest workout</button></a>
+        </div>
+    </li>
+    {% endif %}
+    <li>
+        <div class="big-detail">
+            <div class="top-row" style="position: relative; text-align: center;">
+                <div style="display: inline-block;">
+                    Today's Workout
+                </div>
+            </div>
+            <div class="big-table" style="margin-top: 5px;">
+                {% for day, workout in today.items %}
+                {% for title, exercises in workout.items %}
+                {% if title == 'Rest' %}
+                <h1 style="margin-top: 120px; background-color: #181D4B; width:200px; border-radius: 10px; margin-left: 110px; color: white"><strong>Rest day</strong></h1>
+                {% else %}
+                <h8><strong>{{title}}</strong></h8>
+                <table>
+                    <tr>
+                        <th>EXERCISE</th>
+                        <th>SETS AND REPS</th>
+                    </tr>
+                    {% for exercise in exercises %}
+                    <tr>
+                        {% for name in exercise.keys %}
+                        <td>{{name}}</td>
+                        {% endfor %}
+                        {% for value in exercise.values %}
+                        <td>{{value}}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </li>
+    
+    <li>
+        <div class="big-detail">
+            <div class="big-title">
+                Calories burned vs eaten in past 7 days
+            </div>
+            <canvas id="myChart" style="width:50%;max-width:450px; height: 150px; margin-top: 10px; text-align: center;"></canvas>
+        </div>
+    </li>
+</ul>
+<script src="{% static 'tracker/index.js' %}"></script>
+<div id="day-pairs" style="display: none">
+    {% for day, cal, eaten in past_days %}
+    <p class="days">{{day}}</p>
+    <p class="cals">{{cal}}</p>
+    <p class="eaten">{{eaten}}</p>
+    {% endfor %}
+</div>
+{% endblock %}
