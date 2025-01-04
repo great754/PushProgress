@@ -114,7 +114,12 @@ def index(request):
                         if len(Goal.objects.filter(current_user = request.user))> 0:
                             workout = Goal.objects.get(current_user = request.user)
                             paired = pair_days(workout.days, workout.workout)
+                            start = int(Stats.objects.get(current_user = request.user).starting_weight)
+                            curr_diff = weight - start
+                            total_diff = weight_goal - start
                             return_dict = {
+                                "curr_diff": curr_diff,
+                                "total_diff": total_diff,
                                 "goals": goals,
                                 "weight": weight,
                                 "calorie_goal":calories.calorie_goal, 
@@ -135,7 +140,12 @@ def index(request):
                                 return_dict["done"] = "Done"
                             return render(request, 'tracker/index.html', return_dict)
                         else:
+                            start = int(Stats.objects.get(current_user = request.user).starting_weight)
+                            curr_diff = weight - start
+                            total_diff = weight_goal - start
                             return_dict = {
+                                "curr_diff": curr_diff,
+                                "total_diff": total_diff,
                                 "goals": goals,
                                 "weight": weight,
                                 "calorie_goal":calories.calorie_goal,

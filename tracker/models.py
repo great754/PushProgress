@@ -17,6 +17,7 @@ class Stats(models.Model):
     )
     current_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="current_user")
     goals = models.JSONField(default=list)
+    starting_weight = models.IntegerField(default=0)
     weight = models.IntegerField(default=0)         # in lbs
     weights = models.JSONField(default=list)
     weight_goal = models.IntegerField(default=0)    # in lbs

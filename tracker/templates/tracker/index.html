@@ -2,6 +2,12 @@
 
 {% block body %}
 {% load static %}
+<div id="currDiff" style="display: none">
+    {{curr_diff}}
+</div>
+<div id="totalDiff" style="display:none">
+    {{total_diff}}
+</div>
 <div id="welcome">
     <h3>Welcome Back, <strong>{{user.username}}</strong></h3>
 </div>
