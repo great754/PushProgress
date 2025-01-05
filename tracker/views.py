@@ -187,7 +187,7 @@ def set_goal(request):
                 goals = request.POST.getlist("goal")
                 weight_goal = request.POST["weight_goal"]
                 weights = [(weight, str(datetime.now()))]
-                Stats(current_user = request.user, goals = goals, weight = weight, weights = weights, weight_goal = weight_goal, height = height).save()
+                Stats(current_user = request.user, goals = goals, weight = weight, weights = weights, starting_weight = weight, weight_goal = weight_goal, height = height).save()
                 return redirect("food")
             else:
                 stats_choices = Stats.GOAL_CHOICES

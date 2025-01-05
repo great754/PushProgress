@@ -1,4 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
+    const screenWidth = window.innerWidth;
+
+    if (screenWidth < 559) {
+        document.querySelector('.navbar').style.width = '559px';
+    }
+
+    window.addEventListener("resize", () => {
+        if (screenWidth < 508) {
+            document.querySelector('.navbar').style.width = '559px';
+        }
+        else {
+            document.querySelector('.navbar').style.width = '100%';
+        }
+    })
+
+    
     let totalCals = 0;
     let breakfastTimes = 1;
     let lunchTimes = 1;

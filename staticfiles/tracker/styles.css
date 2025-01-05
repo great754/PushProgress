@@ -15,6 +15,10 @@ td {
     background-color: #8693AB !important;
 }
 
+.navbar {
+    width: 100%;
+}
+
 .navbar-dark .navbar-nav .nav-link, .navbar-brand {
     color: rgb(0, 0, 0);
 }

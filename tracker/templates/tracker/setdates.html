@@ -2,7 +2,7 @@
 
 {% block body %}
 <div id="breakfast-form" class="form-box" style="width: 500px; height: 370px; text-align:left">
-    <strong style="font-size: 20px; margin-left: 100px;">What days can you workout?</strong>
+    <strong style="font-size: 20px; text-align: center; margin-left: 115px;">What days can you workout?</strong>
     <form action="{% url 'set_dates' %}" method="post" style="margin-left: 30px; padding-top:30px; font-size: 18px;">
         {% csrf_token %}
         <div>

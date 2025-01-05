@@ -1,4 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    const screenWidth = window.innerWidth;
+
+    if (screenWidth < 520) {
+        document.querySelector('.popup-content').style.width = '520px';
+    }
+
+    window.addEventListener("resize", () => {
+        if (screenWidth < 520) {
+            document.querySelector('.popup-content').style.width = '520px';
+        }
+    })
+
     let text = document.querySelector('#workoutDays').textContent;
     text = text.slice(0, text.length - 2) + '.';
     document.querySelector('#workoutDays').textContent = text;
