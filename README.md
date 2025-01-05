@@ -17,7 +17,7 @@ Before running the project, ensure you have the following installed on your syst
 - Docker Compose
 
 ## Setup Instructions
-The app can be used through the url [www.thepushprogress.com](https://www.thepushprogress.com), but if you want to use 
+The app can be used through the url [www.thepushprogress.com](https://www.thepushprogress.com), but here are the instructions to access if needed 
 
 ### 1. Clone the Repository
 
