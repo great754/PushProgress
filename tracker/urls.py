@@ -17,5 +17,6 @@ urlpatterns = [
     path('editfood/<int:id>', views.edit_food, name="editfood"),
     path('editactivity/<int:id>', views.edit_activity, name="editactivity"),
     path('deleteactivity/<int:id>', views.delete_activity, name="deleteactivity"),
-    path('deletefood/<int:id>', views.delete_food, name="deletefood")
+    path('deletefood/<int:id>', views.delete_food, name="deletefood"),
+    path('welcome/', views.landing, name="landing")
 ]

@@ -171,7 +171,7 @@ def index(request):
         else:
             return redirect('set')
     else:
-        return redirect('login')
+        return redirect('landing')
 
 def set_goal(request):
     if request.user.is_authenticated:
@@ -503,3 +503,6 @@ def delete_food(request, id):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def landing(request):
+    return render(request, 'tracker/landing.html')
